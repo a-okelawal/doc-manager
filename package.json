@@ -1,0 +1,31 @@
+{
+  "name": "check3",
+  "version": "1.0.0",
+  "description": "An app used to manage documents",
+  "main": "server.js",
+  "scripts": {
+    "test": "jasmine-node tests/* --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andela-abisoye/doc-manager.git"
+  },
+  "author": "Abisoye Oke-lawal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andela-abisoye/doc-manager/issues"
+  },
+  "homepage": "https://github.com/andela-abisoye/doc-manager#readme",
+  "devDependencies": {
+    "express": "^4.14.0",
+    "jasmine": "^2.5.2",
+    "jasmine-spec-reporter": "^2.7.0",
+    "supertest": "^2.0.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "pg": "^6.1.0",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^3.24.5"
+  }
+}
