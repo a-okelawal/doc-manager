@@ -16,6 +16,28 @@ app.use(bodyParser.urlencoded({extended: true}));
 var port = process.env.PORT || 3030;
 app.set('superSecret', config.secret);
 
+//Set router authentication
+router.use(function(req, res, next) {
+  //Check body or params for token
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+  if(token) {
+    //decode token
+    jwt.verify(token, app.get('superSecret'), function (err, decoded) {
+      if(err) {
+        return res.json({message: 'Failed to authenticate token.'});
+      } else {
+        //If all is good, save request for use in other routes
+        req.decoded = decoded;
+        next();
+      }
+    });
+  } else {
+    //If there is no token, return error
+    return res.status(403).send({message: 'No Token Provided.'});
+  }
+});
+
 //Route for creting users
 router.route('/users').post(function(req, res){
   var body = req.body;
