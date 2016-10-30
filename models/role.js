@@ -7,6 +7,11 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // associations can be defined here
         models.Role.hasMany(models.User);
+      },
+      all: function(models) {
+        models.Role.findAll({}).then(function(roles){
+          return roles;
+        });
       }
     }
   });
