@@ -1,6 +1,6 @@
 'use strict';
+var config = require('../config.js');
 var crypto = require('crypto-js');
-var config = require('../config');
 
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
@@ -8,11 +8,13 @@ module.exports = function(sequelize, DataTypes) {
     lastname: DataTypes.STRING,
     firstname: DataTypes.STRING,
     email: DataTypes.STRING,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    RoleId: DataTypes.INTEGER
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
+        models.User.belongsTo(models.Role);
       },
       encrypt: function(pass) {
         return crypto.AES.encrypt(pass, config.secret).toString();
@@ -22,6 +24,6 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
-  User.sync();
+  // User.sync();
   return User;
 };
