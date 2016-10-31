@@ -8,9 +8,9 @@ module.exports = function(sequelize, DataTypes) {
         // associations can be defined here
         models.Role.hasMany(models.User);
       },
-      all: function(models) {
-        models.Role.findAll({}).then(function(roles){
-          return roles;
+      all: function(models, callback) {
+        return models.Role.findAll({}).then(function(roles){
+          callback(null, roles);
         });
       }
     }

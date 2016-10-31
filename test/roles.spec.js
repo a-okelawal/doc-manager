@@ -22,8 +22,13 @@ describe('Role', function(){
   });
 
   it(' should validate all roles are returned on Roles.all.', function(done){
-    const first = Role.all.length;
-    expect(first).to.equal(second);
-    done();
+    Role.all(models, function(err, data){
+      if(err) {
+        console.log(err);
+      } else {
+        expect(data.length).to.equal(second);
+        done();
+      }
+    });
   });
 });
