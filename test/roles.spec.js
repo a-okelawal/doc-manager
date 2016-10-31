@@ -25,6 +25,7 @@ describe('Role', function(){
     Role.all(models, function(err, data){
       if(err) {
         console.log(err);
+        done();
       } else {
         expect(data.length).to.equal(second);
         done();

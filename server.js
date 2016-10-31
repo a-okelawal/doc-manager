@@ -45,6 +45,7 @@ app.use(function(req, res, next) {
 //Add Routes
 app.use('/api', require('./routes/userRoute'));
 app.use('/api', require('./routes/roleRoute'));
+app.use('/api', require('./routes/docRoute'));
 
 console.log('Connected to port ' + port);
 app.listen(port);
