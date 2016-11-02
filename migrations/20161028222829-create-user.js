@@ -11,14 +11,20 @@ module.exports = {
       username: {
         type: Sequelize.STRING
       },
-      name: {
-        type: Sequelize.OBJECT
+      lastname: {
+        type: Sequelize.STRING
+      },
+      firstname: {
+        type: Sequelize.STRING
       },
       email: {
         type: Sequelize.STRING
       },
       password: {
         type: Sequelize.STRING
+      },
+      RoleId: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
