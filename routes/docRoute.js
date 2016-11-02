@@ -22,9 +22,34 @@ router.route('/documents').post(function(req, res) {
     }
   });
 }).get(function(req, res) {
-  Document.findAll({}).then(function(docs){
-    res.send(docs);
-  });
+  if(req.query.limit && req.query.offset){
+    Document.findAll({
+      order: [
+        ['createdAt', 'DESC']
+      ],
+      limit: req.query.limit,
+      offset: req.query.offset
+    }).then(function(docs){
+      res.send(docs);
+    });
+  } else if(req.query.limit) {
+    Document.findAll({
+      order: [
+        ['createdAt', 'DESC']
+      ],
+      limit: req.query.limit
+    }).then(function(docs){
+      res.send(docs);
+    });
+  } else {
+    Document.findAll({
+      order: [
+        ['createdAt', 'DESC']
+      ]
+    }).then(function(docs){
+      res.send(docs);
+    });
+  }
 }).delete(function(req, res) {
   Document.destroy({
     where: {

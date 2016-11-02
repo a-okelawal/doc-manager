@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 var request = require('supertest')(app);
 var models = require('../models/index');
 var Role = models.Role;
-var second = {};
+var second = 0;
 
 describe('Role', function(){
   before(function(done) {
@@ -25,7 +25,6 @@ describe('Role', function(){
     Role.all(models, function(err, data){
       if(err) {
         console.log(err);
-        done();
       } else {
         expect(data.length).to.equal(second);
         done();
