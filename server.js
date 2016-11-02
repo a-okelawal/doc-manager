@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
 var config = require('./config');
 var morgan = require('morgan');
+var cookieSession = require('cookie-session');
 
 //Body parser to get info from body or params
 app.use(bodyParser.json());
@@ -19,6 +20,11 @@ router.route('/test').get(function(req, res){
 //Port Configuration
 var port = process.env.PORT || 3030;
 app.set('superSecret', config.secret);
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['userId, userRole', 'token']
+}));
 
 //Set router authentication
 app.use(function(req, res, next) {
@@ -45,6 +51,7 @@ app.use(function(req, res, next) {
 //Add Routes
 app.use('/api', require('./routes/userRoute'));
 app.use('/api', require('./routes/roleRoute'));
+app.use('/api', require('./routes/docRoute'));
 
 console.log('Connected to port ' + port);
 app.listen(port);
