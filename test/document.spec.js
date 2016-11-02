@@ -7,6 +7,7 @@ var altrequest = require('request');
 var models = require('../models/index');
 var Document = models.Document;
 var second = {};
+var currentData = [];
 
 describe('Document', function(){
 
@@ -44,16 +45,19 @@ describe('Document', function(){
 
   it(' should validate the return of all documents on Documents.all with query parameter limit.', function(done){
     Document.all(models, 1, function(err, data) {
+      currentData = data;
       expect(data.length).to.equal(second);
       done();
     });
   });
 
   it(' should employ the limit with an offset as well.', function(){
-
+    
   });
 
   it(' should return all documents in order of their published dates.', function(){
-
+    var dt1 = new Date(currentData[0].dataValues.createdAt);
+    var dt2 = new Date(currentData[1].dataValues.createdAt);
+    expect(dt1.getTime() - dt2.getTime()).to.be.above(0);
   });
 });

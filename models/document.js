@@ -12,6 +12,9 @@ module.exports = function(sequelize, DataTypes) {
       },
       all: function(models, ownerId, callback) {
         models.Document.findAll({
+          order: [
+            ['createdAt', 'DESC']
+          ],
           where: {
             ownerId: ownerId
           }
