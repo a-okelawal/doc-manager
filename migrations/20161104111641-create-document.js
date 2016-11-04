@@ -17,6 +17,12 @@ module.exports = {
       content: {
         type: Sequelize.STRING
       },
+      private: {
+        type: Sequelize.BOOLEAN
+      },
+      role: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

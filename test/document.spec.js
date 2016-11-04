@@ -4,16 +4,13 @@ var token = config.token;
 var expect = require('chai').expect;
 var request = require('supertest')(app);
 var altrequest = require('request');
-var models = require('../models/index');
-var Document = models.Document;
-var second = {};
-var currentData = [];
+var docSeed = require('../seeders/docSeed');
+docSeed();
 
 describe('Document', function(){
-
   before(function(done){
     altrequest({url: 'http://localhost:3030/api/documents', method: 'DELETE', json: {
-      title: 'Adventures of the stolen mind'
+      title: 'Another'
     }, headers: {
       'Content-Type': 'application/json',
       'x-access-token': token
@@ -22,42 +19,72 @@ describe('Document', function(){
     });
   });
 
-  before(function(done) {
-    Document.findAll({
-      where: {
-        ownerId: 1
-      }
-    }).then(function(documents){
-      console.log(documents);
-      second = documents.length;
-      done();
-    });
-  });
-
-
   it(' should validate the creation of a new user document.', function(done){
     request.post('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
-      ownerId: 2,
-      title: 'Adventures of the stolen mind',
-      content: 'Once upon a time, a mind untouched by man was stolen from a man on a hill. One like no other, the story...when we introduced it to society.'
+      ownerId: 1,
+      title: 'Another',
+      content: 'This another document for testing.',
+      private: false,
+      role: 'regular'
     }).expect(200).expect({message: 'Document Created.'}).end(done);
   });
 
-  it(' should validate the return of all documents on Documents.all with query parameter limit.', function(done){
-    Document.all(models, 1, function(err, data) {
-      currentData = data;
-      expect(data.length).to.equal(second);
-      done();
-    });
+  it(' should return x documents with query parameter limit x.', function(done){
+    request.get('/api/documents?limit=5').set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
+      function(req, res){
+        expect(res.body).to.have.length.of.at.most(5);
+        done();
+      }
+    );
   });
 
-  it(' should employ the limit with an offset as well.', function(){
-    
+  it(' should employ the limit with an offset as well.', function(done){
+    request.get('/api/documents?limit=5&offset=3').set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
+      function(req, res){
+        expect(res.body[0].id).to.be.above(3);
+        done();
+      }
+    );
   });
 
-  it(' should return all documents in order of their published dates.', function(){
-    var dt1 = new Date(currentData[0].dataValues.createdAt);
-    var dt2 = new Date(currentData[1].dataValues.createdAt);
-    expect(dt1.getTime() - dt2.getTime()).to.be.above(0);
+  it(' should employ the limit with an offset as well.', function(done){
+    request.get('/api/documents?limit=5&offset=3').set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
+      function(req, res){
+        expect(res.body[0].id).to.be.above(3);
+        done();
+      }
+    );
+  });
+
+  it(' should employ the limit with documents that contain the defined role.', function(done){
+    request.get('/api/documents?limit=5&role=regular').set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
+      function(req, res){
+        expect(res.body[0].role).to.equal('regular');
+        done();
+      }
+    );
+  });
+
+  it(' should employ the limit with documents that where made on the date parameter.', function(done){
+    request.get('/api/documents?limit=5&date=2016-11-04').set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
+      function(req, res){
+        var result = new Date('2016-11-04');
+        result.setDate(result.getDate() + 1);
+        expect(new Date(res.body[0].createdAt)).to.be.below(result);
+        expect(new Date(res.body[0].createdAt)).to.be.above(new Date('2016-11-04'));
+        done();
+      }
+    );
+  });
+
+  it(' should return all documents in order of their published dates.', function(done){
+    request.get('/api/documents').set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
+      function(req, res){
+        var date1 = new Date(res.body[0].createdAt);
+        var date2 = new Date(res.body[1].createdAt);
+        expect(date1 - date2).to.be.above(-1);
+        done();
+      }
+    );
   });
 });
