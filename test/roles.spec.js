@@ -4,6 +4,8 @@ var token = config.token;
 var expect = require('chai').expect;
 var request = require('supertest')(app);
 var models = require('../models/index');
+var roleSeed = require('../seeders/roleSeed');
+roleSeed();
 var Role = models.Role;
 var second = 0;
 

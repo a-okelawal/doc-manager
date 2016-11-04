@@ -3,12 +3,13 @@ module.exports = function(sequelize, DataTypes) {
   var Document = sequelize.define('Document', {
     ownerId: DataTypes.INTEGER,
     title: DataTypes.STRING,
-    content: DataTypes.STRING
+    content: DataTypes.STRING,
+    private: DataTypes.BOOLEAN,
+    role: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
-        //models.Document.belongsTo(models.User);
       },
       all: function(models, ownerId, callback) {
         models.Document.findAll({
@@ -24,5 +25,6 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
+  Document.sync();
   return Document;
 };

@@ -5,6 +5,8 @@ var expect = require('chai').expect;
 var request = require('supertest')(app);
 var altrequest = require('request');
 var models = require('../models/index');
+var userSeed = require('../seeders/userSeed');
+userSeed();
 var User = models.User;
 var second = 0;
 
