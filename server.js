@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
 var config = require('./config');
 var morgan = require('morgan');
+var cookieSession = require('cookie-session');
 
 //Body parser to get info from body or params
 app.use(bodyParser.json());
@@ -20,25 +21,42 @@ router.route('/test').get(function(req, res){
 var port = process.env.PORT || 3030;
 app.set('superSecret', config.secret);
 
+//Set cookie session
+app.use(cookieSession({
+  name: 'session',
+  keys: ['userId, userRole', 'token']
+}));
+
+//test
+app.use(function(req, res, next){
+  res.on('render', function(){
+    res.locals.route = req.route;
+  });
+  next();
+});
+
 //Set router authentication
 app.use(function(req, res, next) {
-  //Check body or params for token
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-  if(token) {
-    //decode token
-    jwt.verify(token, app.get('superSecret'), function (err, decoded) {
-      if(err) {
-        return res.json({message: 'Failed to authenticate token.'});
-      } else {
-        //If all is good, save request for use in other routes
-        req.decoded = decoded;
-        next();
-      }
-    });
+  if(req.path === '/api/users/login') {
+    next();
   } else {
-    //If there is no token, return error
-    return res.status(403).send({message: 'No Token Provided.'});
+    //Check body or params for token
+    var token = req.session.token || req.body.token || req.query.token || req.headers['x-access-token'];
+    if(token) {
+      //decode token
+      jwt.verify(token, app.get('superSecret'), function (err, decoded) {
+        if(err) {
+          return res.json({message: 'Failed to authenticate token.'});
+        } else {
+          //If all is good, save request for use in other routes
+          req.decoded = decoded;
+          next();
+        }
+      });
+    } else {
+      //If there is no token, return error
+      return res.status(403).send({message: 'No Token Provided.'});
+    }
   }
 });
 

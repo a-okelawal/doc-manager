@@ -5,7 +5,7 @@ var Document = models.Document;
 
 router.route('/documents').post(function(req, res) {
   if(!req.body.title) {
-    res.send({message: 'Title or Content is missing.'})
+    res.send({message: 'Title of document is missing.'});
   }
   Document.findOne({
     where: {
@@ -75,6 +75,17 @@ router.route('/documents').post(function(req, res) {
     }).then(function(docs){
       res.send(docs);
     });
+  } else if(req.query.ownerId) {
+    Document.findAll({
+      order: [
+        ['createdAt', 'DESC']
+      ],
+      where : {
+        ownerId: req.query.ownerId
+      }
+    }).then(function(docs){
+      res.send(docs);
+    });
   } else {
     Document.findAll({
       order: [
@@ -85,6 +96,9 @@ router.route('/documents').post(function(req, res) {
     });
   }
 }).delete(function(req, res) {
+  if(!req.body.title) {
+    res.send({message: 'Document name is needed to delete.'});
+  }
   Document.destroy({
     where: {
       title: req.body.title
@@ -108,12 +122,16 @@ router.route('/documents/:title').get(function(req, res) {
       }
     }).then(function(document) {
       if(document) {
-        // document.updateAttributes({
-        //   title: req.body.title,
-        //   content: req.body.content
-        // }).success(function(document){
-        //   res.send(document);
-        // });
+        const body = req.body;
+        document.updateAttributes({
+          ownerId: body.ownerId || document.ownerId,
+          title: body.title || document.title,
+          content: body.content || document.content,
+          private: body.private || document.private,
+          role: body.role || document.role
+        }).success(function(document){
+          res.send(document);
+        });
       } else {
         res.send({message: 'Document does not exist.'});
       }
