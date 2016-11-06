@@ -6,12 +6,6 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
-        models.Role.hasMany(models.User);
-      },
-      all: function(models, callback) {
-        return models.Role.findAll({}).then(function(roles){
-          callback(null, roles);
-        });
       }
     }
   });

@@ -10,6 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
+<<<<<<< HEAD
       },
       all: function(models, ownerId, callback) {
         models.Document.findAll({
@@ -22,6 +23,8 @@ module.exports = function(sequelize, DataTypes) {
         }).then(function(documents) {
           callback(null, documents);
         });
+=======
+>>>>>>> 5c053883b430de5cf51063516255dafe2da6cbae
       }
     }
   });
