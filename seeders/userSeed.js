@@ -13,10 +13,7 @@ var userSeed = function () {
     'Content-Type': 'application/json',
     'x-access-token': token
   }
-  }, function(err) {
-    if(err) {
-      console.log(err);
-    }
+  }, function() {
   });
 
   altrequest({url: 'http://localhost:3030/api/users', method: 'POST', json: {
@@ -30,10 +27,7 @@ var userSeed = function () {
     'Content-Type': 'application/json',
     'x-access-token': token
   }
-  }, function(err) {
-    if(err) {
-      console.log(err);
-    }
+  }, function() {
   });
 };
 

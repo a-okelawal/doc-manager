@@ -8,10 +8,7 @@ var roleSeed = function () {
     'Content-Type': 'application/json',
     'x-access-token': token
   }
-  }, function(err) {
-    if(err) {
-      console.log(err);
-    }
+  }, function() {
   });
 
   altrequest({url: 'http://localhost:3030/api/roles', method: 'POST', json: {
@@ -20,10 +17,7 @@ var roleSeed = function () {
     'Content-Type': 'application/json',
     'x-access-token': token
   }
-  }, function(err) {
-    if(err) {
-      console.log(err);
-    }
+  }, function() {
   });
 };
 

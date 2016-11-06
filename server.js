@@ -3,9 +3,14 @@ var app = express();
 var router = express.Router();
 var bodyParser = require('body-parser');
 
+var jwt = require('jsonwebtoken');
+var config = require('./config');
+var morgan = require('morgan');
+var cookieSession = require('cookie-session');
+
+//Body parser to get info from body or params
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-<<<<<<< HEAD
 app.use(morgan('dev'));
 
 router.route('/test').get(function(req, res){
@@ -59,7 +64,7 @@ app.use(function(req, res, next) {
 app.use('/api', require('./routes/userRoute'));
 app.use('/api', require('./routes/roleRoute'));
 app.use('/api', require('./routes/docRoute'));
-=======
->>>>>>> 5c053883b430de5cf51063516255dafe2da6cbae
 
-router.route()
+console.log('Connected to port ' + port);
+app.listen(port);
+module.exports = app;
