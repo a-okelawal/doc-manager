@@ -12,7 +12,8 @@ var docSeed = function () {
     'Content-Type': 'application/json',
     'x-access-token': token
   }
-  }, function(err) {
+}, function(err, data) {
+  console.log(data);
     if(err) {
       console.log(err);
     }

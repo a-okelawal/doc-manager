@@ -65,7 +65,7 @@ describe('User', function() {
       email: 'adlaw@test.com',
       password: 'adelaw',
       roleId: 2
-    }).expect(200).expect({message: 'Singup details are incomplete, user not created successfully.'}).end(done);
+    }).expect(400).expect({message: 'User email must be unique and contain last and first name.'}).end(done);
   });
 
   it('should validate that all users are returned.', function(done){

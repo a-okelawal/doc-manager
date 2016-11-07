@@ -8,59 +8,32 @@ var config = require('../config');
 //Route for creting users
 router.route('/users').post(function(req, res){
   var body = req.body;
-  if(body.username && body.firstname && body.lastname && body.password && body.email && body.roleId) {
-    User.findOne({
-      where: {
-        $or: [
-          {
-            email: {
-              $eq: body.email
-            }
-          }, {
-            username: {
-              $eq: body.username
-            }
-          }
-        ]
-      }
-    }).then(function(user){
-      if(!user) {
-        User.create({
-          username: body.username,
-          firstname: body.firstname,
-          lastname: body.lastname,
-          email: body.email,
-          password: User.encrypt(body.password),
-          RoleId: body.roleId
-        }).then(function(user){
-          //var token = jwt.sign(user.dataValues, config.secret, {expiresIn: 60*60*60*24});
-          res.send({message: 'User created successfully.'});
-        });
-      } else {
-        res.send({message: 'User already exists.'});
-      }
-    });
-  } else {
-    res.send({message: 'Singup details are incomplete, user not created successfully.'});
-  }
+  User.create({
+    username: body.username,
+    firstname: body.firstname,
+    lastname: body.lastname,
+    email: body.email,
+    password: User.encrypt(body.password),
+    RoleId: body.roleId
+  }).then(function(user){
+    //var token = jwt.sign(user.dataValues, config.secret, {expiresIn: 60*60*60*24});
+    res.send({message: 'User created successfully.'});
+  }).catch(function(err) {
+    res.status(400).send({message: 'User email must be unique and contain last and first name.'});
+  });
 }).get(function(req, res){
   User.findAll({}).then(function(users){
     res.status(200).send(users);
   });
 }).delete(function(req, res){
-  if(!req.body.username) {
-    res.send('Username is required to delete a user.');
-  }
   User.destroy({
     where: {
       username: req.body.username
     }
-  }).then(function(err){
-    if(err) {
-      res.send({message: 'An error occured.', error: err.message});
-    } else {
-      res.send({message: 'User deleted.'});
-    }
+  }).then(function(){
+    res.send({message: 'User deleted.'});
+  }).catch(function(err) {
+    res.status(404).send({message: 'User not found.'});
   });
 });
 
@@ -74,49 +47,37 @@ router.route('/users/:username').get(function(req, res){
     res.send(user);
   });
 }).put(function(req, res){
-  if(req.params.username) {
-    User.findOne({
-      where: {
-        username: req.body.username
-      }
-    }).then(function(user){
-      if(user) {
-        const body = req.body;
-        const password = body.password || user.password;
-        user.updateAttributes({
-          username: body.username || user.username,
-          firstname: body.firstname || user.firstname,
-          lastname: body.lastname || user.lastname,
-          email: body.email || user.email,
-          password: User.encrypt(password),
-          RoleId: body.roleId || user.roleId
-        }).success(function(user){
-          res.send(user);
-        });
-      } else {
-        res.send({message: 'No Such User Exists.'});
-      }
-    });
-  } else {
-    res.send({message: 'Username or email is needed to find user.'});
-  }
-}).delete(function(req, res) {
   User.findOne({
+    where: {
+      username: req.body.username
+    }
+  }).then(function(user){
+      const body = req.body;
+      const password = body.password || user.password;
+      user.update({
+        username: body.username || user.username,
+        firstname: body.firstname || user.firstname,
+        lastname: body.lastname || user.lastname,
+        email: body.email || user.email,
+        password: User.encrypt(password),
+        RoleId: body.roleId || user.roleId
+      }).then(function(user){
+        res.send(user);
+      }).catch(function(err){
+        res.status(404).send({message: 'No Such User Exists.'});
+      });
+  }).catch(function(err){
+    res.status(400).send({message: 'Username or email is needed to find user.'});
+  });
+}).delete(function(req, res) {
+  User.destroy({
     where: {
       username: req.params.username
     }
-  }).then(function(user) {
-    if(user) {
-      User.destroy({
-        where: {
-          username: req.params.username
-        }
-      }).then(function(){
-        res.send({message: 'User was deleted.'});
-      });
-    } else {
-      res.send({message: 'User does not exist'});
-    }
+  }).then(function(){
+    res.send({message: 'User was deleted.'});
+  }).catch(function(err){
+    res.status(400).send({message: 'User does not exist'});
   });
 });
 

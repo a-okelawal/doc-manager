@@ -4,27 +4,16 @@ var models = require('../models/index');
 var Document = models.Document;
 
 router.route('/documents').post(function(req, res) {
-  if(!req.body.title) {
-    res.send({message: 'Title of document is missing.'});
-  }
-  Document.findOne({
-    where: {
-      title: req.body.title
-    }
-  }).then(function(document){
-    if(!document) {
-      Document.create({
-        ownerId: req.body.ownerId,
-        title: req.body.title,
-        content: req.body.content || '',
-        private: req.body.private || 'public',
-        role: req.body.role
-      }).then(function(){
-        res.send({message: 'Document Created.'});
-      });
-    } else {
-      res.send({message: 'Document title already exists.'});
-    }
+  Document.create({
+    ownerId: req.body.ownerId,
+    title: req.body.title,
+    content: req.body.content || '',
+    private: req.body.private || false,
+    role: req.body.role
+  }).then(function(){
+    res.send({message: 'Document Created.'});
+  }).catch(function(err){
+    res.send({message: 'Document title already exists.'});
   });
 }).get(function(req, res) {
   if(req.query.limit && req.query.offset){
@@ -90,21 +79,34 @@ router.route('/documents').post(function(req, res) {
     Document.findAll({
       order: [
         ['createdAt', 'DESC']
-      ]
+      ],
+      where : {
+        $or: [
+          {
+            ownerId : {
+              $eq: req.session.userId
+            }
+          },
+          {
+            private: {
+              $eq: false
+            }
+          }
+        ]
+      }
     }).then(function(docs){
       res.send(docs);
     });
   }
 }).delete(function(req, res) {
-  if(!req.body.title) {
-    res.send({message: 'Document name is needed to delete.'});
-  }
   Document.destroy({
     where: {
       title: req.body.title
     }
   }).then(function(){
     res.send({message: 'Document deleted.'});
+  }).catch(function(err){
+    res.status(400).send({message: 'Bad Request.'});
   });
 });
 
