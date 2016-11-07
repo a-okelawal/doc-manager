@@ -28,10 +28,6 @@ router.route('/roles').post(function(req, res){
     }
   });
 }).get(function(req, res){
-  //console.log(Role.all(models, function(err, data){return roles;}));
-  // Role.findAll({}).then(function(role){
-  //   res.send(role);
-  // });
   Role.all(models, function(err, data){
     return res.send(data);
   });

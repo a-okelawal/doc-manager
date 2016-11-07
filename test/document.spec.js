@@ -20,6 +20,20 @@ describe('Document', function(){
     });
   });
 
+  before(function(done){
+    altrequest({url: 'http://localhost:3030/api/documents', method: 'POST', json: {
+      title: 'tobe',
+      content: 'Deleted',
+      private: false,
+      role: 'regular'
+    }, headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': token
+    }}, function() {
+      done();
+    });
+  });
+
   it(' should validate the creation of a new user document.', function(done){
     request.post('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
       ownerId: 1,
@@ -60,7 +74,6 @@ describe('Document', function(){
   it(' should employ the limit with documents that where made on the date parameter.', function(done){
     var temp = new Date();
     query = (temp.getMonth() + 1) + "-" + temp.getDate();
-    console.log(query);
     request.get('/api/documents?limit=5&date=2016-' + query).set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
       function(req, res){
         var result = new Date('2016-11-07');
@@ -81,5 +94,15 @@ describe('Document', function(){
         done();
       }
     );
+  });
+
+  it('should validate that users can update details.', function(done){
+    request.put('/api/documents/Another').set('x-access-token', token).set('Accept', 'application/json').send({
+      content: 'This is change'
+    }).expect(200).end(function(err, res) {
+      console.log(res);
+      expect(res.body.content).to.equal('This is change');
+      done();
+    });
   });
 });

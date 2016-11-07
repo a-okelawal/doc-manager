@@ -49,23 +49,24 @@ router.route('/users/:username').get(function(req, res){
 }).put(function(req, res){
   User.findOne({
     where: {
-      username: req.body.username
+      username: req.params.username
     }
-  }).then(function(user){
-      const body = req.body;
-      const password = body.password || user.password;
-      user.update({
-        username: body.username || user.username,
-        firstname: body.firstname || user.firstname,
-        lastname: body.lastname || user.lastname,
-        email: body.email || user.email,
-        password: User.encrypt(password),
-        RoleId: body.roleId || user.roleId
-      }).then(function(user){
-        res.send(user);
-      }).catch(function(err){
-        res.status(404).send({message: 'No Such User Exists.'});
-      });
+  }).then(function(data){
+    var user = data.dataValues;
+    var body = req.body;
+    var password = body.password || user.password;
+    data.update({
+      username: body.username || user.username,
+      firstname: body.firstname || user.firstname,
+      lastname: body.lastname || user.lastname,
+      email: body.email || user.email,
+      password: User.encrypt(password),
+      RoleId: body.roleId || user.roleId
+    }).then(function(user){
+      res.send(user);
+    }).catch(function(err){
+      res.status(404).send({message: 'No Such User Exists.'});
+    });
   }).catch(function(err){
     res.status(400).send({message: 'Username or email is needed to find user.'});
   });
