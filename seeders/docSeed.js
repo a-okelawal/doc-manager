@@ -6,9 +6,9 @@ function sendRequest(fieldData) {
     'Content-Type': 'application/json',
     'x-access-token': token
   }
-}, function(err, data) {
+  }, function(err, data) {
     if(err) {
-      console.log(err);
+        console.log(err);
     }
   });
 }

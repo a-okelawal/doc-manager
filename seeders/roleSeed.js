@@ -14,7 +14,7 @@ function sendRequest(fieldData) {
 }
 
 var roleSeed = function () {
-  senRequest({
+  sendRequest({
     title: 'admin'
   });
 

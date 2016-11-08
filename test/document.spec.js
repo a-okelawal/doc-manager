@@ -8,6 +8,36 @@ var docSeed = require('../seeders/docSeed');
 docSeed();
 
 describe('Document', function(){
+  before(function(done){
+    altrequest({url: 'http://localhost:3030/api/users', method: 'POST', json: ({
+      username: 'admin',
+      firstname: 'admin',
+      lastname: 'admin',
+      email: 'admin@power.com',
+      password: 'admin',
+      RoleId: 1
+    }), headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': token
+    }
+    }, function(err, data) {
+      if(err) {
+        console.log(err);
+      }
+      done();
+    });
+  });
+
+  before(function(done){
+    altrequest({url: 'http://localhost:3030/api/users/login', method: 'POST', json: {
+      username: 'admin',
+      password: 'admin'
+    }, headers: {
+      'Content-Type': 'application/json'
+    }}, function() {
+      done();
+    });
+  });
 
   before(function(done){
     altrequest({url: 'http://localhost:3030/api/documents', method: 'DELETE', json: {
@@ -76,7 +106,7 @@ describe('Document', function(){
     query = (temp.getMonth() + 1) + "-" + temp.getDate();
     request.get('/api/documents?limit=5&date=2016-' + query).set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
       function(req, res){
-        var result = new Date('2016-11-07');
+        var result = new Date('2016'+query);
         result.setDate(result.getDate() + 1);
         expect(new Date(res.body[0].createdAt)).to.be.below(result);
         expect(new Date(res.body[0].createdAt)).to.be.above(new Date('2016-11-04'));
@@ -100,7 +130,6 @@ describe('Document', function(){
     request.put('/api/documents/Another').set('x-access-token', token).set('Accept', 'application/json').send({
       content: 'This is change'
     }).expect(200).end(function(err, res) {
-      console.log(res);
       expect(res.body.content).to.equal('This is change');
       done();
     });
