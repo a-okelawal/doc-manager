@@ -16,71 +16,15 @@ router.route('/documents').post(function(req, res) {
     res.send({message: 'Document title already exists.'});
   });
 }).get(function(req, res) {
-  if(req.query.limit && req.query.offset){
-    Document.findAll({
-      order: [
-        ['createdAt', 'DESC']
-      ],
-      limit: req.query.limit,
-      offset: req.query.offset
-    }).then(function(docs){
-      res.send(docs);
-    });
-  } else if(req.query.limit && req.query.role) {
-    Document.findAll({
-      order: [
-        ['createdAt', 'DESC']
-      ],
-      limit: req.query.limit,
-      where: {
-        role: req.query.role
-      }
-    }).then(function(docs){
-      res.send(docs);
-    });
-  } else if(req.query.limit && req.query.date) {
-    var result = new Date(req.query.date);
-    result.setDate(result.getDate() + 1);
-    Document.findAll({
-      order: [
-        ['createdAt', 'DESC']
-      ],
-      limit: req.query.limit,
-      where: {
-        createdAt: {
-          $lt: result,
-          $gt: new Date(new Date(req.query.date))
-        }
-      }
-    }).then(function(docs){
-      res.send(docs);
-    });
-  } else if(req.query.limit) {
-    Document.findAll({
-      order: [
-        ['createdAt', 'DESC']
-      ],
-      limit: req.query.limit
-    }).then(function(docs){
-      res.send(docs);
-    });
-  } else if(req.query.ownerId) {
-    Document.findAll({
-      order: [
-        ['createdAt', 'DESC']
-      ],
-      where : {
-        ownerId: req.query.ownerId
-      }
-    }).then(function(docs){
-      res.send(docs);
-    });
-  } else {
-    Document.findAll({
-      order: [
-        ['createdAt', 'DESC']
-      ],
-      where : {
+  const queries = {};
+
+  if(req.session.userRole !== 1) {
+    queries = {order:[
+      ['createdAt', 'DESC']
+    ]};
+    const keys = Object.keys(req.query);
+    if(keys.length <= 0) {
+      queries['where'] = {
         $or: [
           {
             ownerId : {
@@ -93,11 +37,38 @@ router.route('/documents').post(function(req, res) {
             }
           }
         ]
-      }
-    }).then(function(docs){
-      res.send(docs);
-    });
+      };
+    } else {
+      keys.forEach((key) => {
+        if(req.session.role === 1) {
+
+        }
+        if(key === 'role') {
+          queries['where'] = {
+            'role' : req.query[key]
+          };
+        } else if(key === 'ownerId') {
+          queries['where'] = {
+            'ownerId' : req.query[key]
+          };
+        } else if(key === 'date') {
+          var result = new Date(req.query[key]);
+          result.setDate(result.getDate() + 1);
+          queries['where'] = {
+            'createdAt': {
+             $lt: result,
+             $gt: new Date(new Date(req.query[key]))
+            }
+          };
+        } else {
+          queries[key] = req.query[key];
+        }
+      });
+    }
   }
+  Document.findAll(queries).then(function(docs){
+    res.send(docs);
+  });
 }).delete(function(req, res) {
   Document.destroy({
     where: {
