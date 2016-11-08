@@ -1,29 +1,25 @@
 var altrequest = require('request');
 var token = require('../config').token;
 
-var roleSeed = function () {
-  altrequest({url: 'http://localhost:3030/api/roles', method: 'POST', json: {
-    title: 'admin'
-  }, headers: {
+function sendRequest(fieldData) {
+  altrequest({url: 'http://localhost:3030/api/roles', method: 'POST', json: fieldData, headers: {
     'Content-Type': 'application/json',
     'x-access-token': token
   }
-  }, function(err) {
+}, function(err, data) {
     if(err) {
       console.log(err);
     }
   });
+}
 
-  altrequest({url: 'http://localhost:3030/api/roles', method: 'POST', json: {
+var roleSeed = function () {
+  senRequest({
+    title: 'admin'
+  });
+
+  sendRequest({
     title: 'regular'
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function(err) {
-    if(err) {
-      console.log(err);
-    }
   });
 };
 

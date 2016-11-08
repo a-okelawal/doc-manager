@@ -2,7 +2,11 @@
 module.exports = function(sequelize, DataTypes) {
   var Document = sequelize.define('Document', {
     ownerId: DataTypes.INTEGER,
-    title: DataTypes.STRING,
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
     content: DataTypes.STRING,
     private: DataTypes.BOOLEAN,
     role: DataTypes.STRING

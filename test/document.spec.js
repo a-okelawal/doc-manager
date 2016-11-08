@@ -8,9 +8,24 @@ var docSeed = require('../seeders/docSeed');
 docSeed();
 
 describe('Document', function(){
+
   before(function(done){
     altrequest({url: 'http://localhost:3030/api/documents', method: 'DELETE', json: {
       title: 'Another'
+    }, headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': token
+    }}, function() {
+      done();
+    });
+  });
+
+  before(function(done){
+    altrequest({url: 'http://localhost:3030/api/documents', method: 'POST', json: {
+      title: 'tobe',
+      content: 'Deleted',
+      private: false,
+      role: 'regular'
     }, headers: {
       'Content-Type': 'application/json',
       'x-access-token': token
@@ -47,15 +62,6 @@ describe('Document', function(){
     );
   });
 
-  it(' should employ the limit with an offset as well.', function(done){
-    request.get('/api/documents?limit=5&offset=3').set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
-      function(req, res){
-        expect(res.body[0].id).to.be.above(3);
-        done();
-      }
-    );
-  });
-
   it(' should employ the limit with documents that contain the defined role.', function(done){
     request.get('/api/documents?limit=5&role=regular').set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
       function(req, res){
@@ -66,9 +72,11 @@ describe('Document', function(){
   });
 
   it(' should employ the limit with documents that where made on the date parameter.', function(done){
-    request.get('/api/documents?limit=5&date=2016-11-04').set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
+    var temp = new Date();
+    query = (temp.getMonth() + 1) + "-" + temp.getDate();
+    request.get('/api/documents?limit=5&date=2016-' + query).set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
       function(req, res){
-        var result = new Date('2016-11-04');
+        var result = new Date('2016-11-07');
         result.setDate(result.getDate() + 1);
         expect(new Date(res.body[0].createdAt)).to.be.below(result);
         expect(new Date(res.body[0].createdAt)).to.be.above(new Date('2016-11-04'));
@@ -86,5 +94,21 @@ describe('Document', function(){
         done();
       }
     );
+  });
+
+  it('should validate that users can update details.', function(done){
+    request.put('/api/documents/Another').set('x-access-token', token).set('Accept', 'application/json').send({
+      content: 'This is change'
+    }).expect(200).end(function(err, res) {
+      console.log(res);
+      expect(res.body.content).to.equal('This is change');
+      done();
+    });
+  });
+
+  it('should validate that users can delete document.', function(done){
+    request.delete('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
+      title: 'tobe'
+    }).expect(200).expect({message: 'Document deleted.'}).end(done);
   });
 });

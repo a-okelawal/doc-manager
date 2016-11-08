@@ -28,17 +28,13 @@ router.route('/roles').post(function(req, res){
     }
   });
 }).get(function(req, res){
-  //console.log(Role.all(models, function(err, data){return roles;}));
-  // Role.findAll({}).then(function(role){
-  //   res.send(role);
-  // });
   Role.all(models, function(err, data){
     return res.send(data);
   });
 }).delete(function(req, res){
   Role.destroy({
     where: {
-      id: 1
+      title: req.body.title
     }
   }).then(function(){
     res.send('Destroyed');

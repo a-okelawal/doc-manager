@@ -4,27 +4,16 @@ var models = require('../models/index');
 var Document = models.Document;
 
 router.route('/documents').post(function(req, res) {
-  if(!req.body.title) {
-    res.send({message: 'Title of document is missing.'});
-  }
-  Document.findOne({
-    where: {
-      title: req.body.title
-    }
-  }).then(function(document){
-    if(!document) {
-      Document.create({
-        ownerId: req.body.ownerId,
-        title: req.body.title,
-        content: req.body.content || '',
-        private: req.body.private || 'public',
-        role: req.body.role
-      }).then(function(){
-        res.send({message: 'Document Created.'});
-      });
-    } else {
-      res.send({message: 'Document title already exists.'});
-    }
+  Document.create({
+    ownerId: req.body.ownerId,
+    title: req.body.title,
+    content: req.body.content || '',
+    private: req.body.private || false,
+    role: req.body.role
+  }).then(function(){
+    res.send({message: 'Document Created.'});
+  }).catch(function(err){
+    res.send({message: 'Document title already exists.'});
   });
 }).get(function(req, res) {
   if(req.query.limit && req.query.offset){
@@ -90,21 +79,34 @@ router.route('/documents').post(function(req, res) {
     Document.findAll({
       order: [
         ['createdAt', 'DESC']
-      ]
+      ],
+      where : {
+        $or: [
+          {
+            ownerId : {
+              $eq: req.session.userId
+            }
+          },
+          {
+            private: {
+              $eq: false
+            }
+          }
+        ]
+      }
     }).then(function(docs){
       res.send(docs);
     });
   }
 }).delete(function(req, res) {
-  if(!req.body.title) {
-    res.send({message: 'Document name is needed to delete.'});
-  }
   Document.destroy({
     where: {
       title: req.body.title
     }
   }).then(function(){
     res.send({message: 'Document deleted.'});
+  }).catch(function(err){
+    res.status(400).send({message: 'Bad Request.'});
   });
 });
 
@@ -115,45 +117,36 @@ router.route('/documents/:title').get(function(req, res) {
     }
   }).then(function(document) {
     res.send(document);
-  }).put(function(req, res) {
+  });
+}).put(function(req, res) {
     Document.findOne({
       where: {
         title: req.params.title
       }
-    }).then(function(document) {
-      if(document) {
-        const body = req.body;
-        document.updateAttributes({
-          ownerId: body.ownerId || document.ownerId,
-          title: body.title || document.title,
-          content: body.content || document.content,
-          private: body.private || document.private,
-          role: body.role || document.role
-        }).success(function(document){
-          res.send(document);
-        });
-      } else {
-        res.send({message: 'Document does not exist.'});
-      }
+  }).then(function(data) {
+    var document = data.dataValues;
+    var body = req.body;
+    data.update({
+      ownerId: body.ownerId || document.ownerId,
+      title: body.title || document.title,
+      content: body.content || document.content,
+      private: body.private || document.private,
+      role: body.role || document.role
+    }).then(function(document){
+      res.send(document);
+    }).catch(function(err) {
+      res.status(404).send({message: 'Document does not exist.'});
     });
-  }).delete(function(req, res) {
-    Document.findOne({
-      where: {
-        title: req.params.title
-      }
-    }).then(function(document) {
-      if(document) {
-        Document.destroy({
-          where: {
-            title: req.params.title
-          }
-        }).then(function(){
-          res.send({message: 'Document was deleted.'});
-        });
-      } else {
-        res.send({message: 'Document does not exist.'});
-      }
-    });
+  });
+}).delete(function(req, res) {
+  Document.destroy({
+    where: {
+      title: req.params.title
+    }
+  }).then(function(){
+    res.send({message: 'Document was deleted.'});
+  }).catch(function(err){
+    res.send({message: 'Document does not exist.'});
   });
 });
 
