@@ -1,36 +1,34 @@
-var app = require('../server');
-var config = require('../config');
-var token = config.token;
-var expect = require('chai').expect;
-var request = require('supertest')(app);
-var models = require('../models/index');
-var roleSeed = require('../seeders/roleSeed');
-roleSeed();
-var Role = models.Role;
-var second = 0;
+'use strict';
 
-describe('Role', function(){
-  before(function(done) {
-    Role.findAll({}).then(function(roles){
+const app = require('../server');
+const config = require('../config');
+const token = config.token;
+const expect = require('chai').expect;
+const request = require('supertest')(app);
+const models = require('../models/index');
+const roleSeed = require('../seeders/roleSeed');
+roleSeed();
+const Role = models.Role;
+let second = 0;
+
+describe('Role', () => {
+  before((done) => {
+    Role.findAll({}).then((roles) => {
       second = roles.length;
       done();
     });
   });
 
-  it(' should validate the new role created has a unique title.', function(done){
+  it(' should validate the new role created has a unique title.', (done) => {
     request.post('/api/roles').set('x-access-token', token).set('Accept', 'application/json').send({
       title: 'admin'
     }).expect(200).expect({message: 'Role already exists.'}).end(done);
   });
 
-  it(' should validate all roles are returned on Roles.all.', function(done){
-    Role.all(models, function(err, data){
-      if(err) {
-        console.log(err);
-      } else {
-        expect(data.length).to.equal(second);
-        done();
-      }
+  it(' should validate all roles are returned on Roles.all.', (done) => {
+    Role.all(models, (err, data) => {
+      expect(data.length).to.equal(second);
+      done();
     });
   });
 });
