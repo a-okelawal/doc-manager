@@ -23,6 +23,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // associations can be defined here
         models.User.belongsTo(models.Role);
+        models.USer.hasMany(models.Document);
       },
       encrypt: function(pass) {
         return crypto.AES.encrypt(pass, config.secret).toString();

@@ -14,6 +14,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
+        Document.belongsTo(models.Users);
       },
       all: function(models, ownerId, callback) {
         models.Document.findAll({
