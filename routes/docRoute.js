@@ -124,7 +124,6 @@ router.route('/documents/:title').get(function(req, res) {
         title: req.params.title
       }
   }).then(function(data) {
-    console.log(data);
     var document = data.dataValues;
     var body = req.body;
     data.update({

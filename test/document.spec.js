@@ -105,4 +105,10 @@ describe('Document', function(){
       done();
     });
   });
+
+  it('should validate that users can delete document.', function(done){
+    request.delete('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
+      title: 'tobe'
+    }).expect(200).expect({message: 'Document deleted.'}).end(done);
+  });
 });

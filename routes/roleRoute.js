@@ -34,7 +34,7 @@ router.route('/roles').post(function(req, res){
 }).delete(function(req, res){
   Role.destroy({
     where: {
-      id: 1
+      title: req.body.title
     }
   }).then(function(){
     res.send('Destroyed');
