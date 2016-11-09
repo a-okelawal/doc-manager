@@ -1,3 +1,5 @@
+'use strict';
+
 var altrequest = require('request');
 var token = require('../config').token;
 
@@ -6,20 +8,18 @@ function sendRequest(fieldData) {
     'Content-Type': 'application/json',
     'x-access-token': token
   }
-  }, function(err, data) {
-    if(err) {
-        console.log(err);
-    }
+}, () => {
   });
 }
 
-var docSeed = function () {
+let docSeed = () => {
   sendRequest({
     ownerId: 1,
     title: 'First',
     content: 'This is First',
     private: false,
-    role: 'regular'
+    role: 'regular',
+    UserId: 1
   });
 
   sendRequest({
@@ -27,7 +27,8 @@ var docSeed = function () {
     title: 'Second',
     content: 'This is Second',
     private: true,
-    role: 'regular'
+    role: 'regular',
+    UserId: 1
   });
 
   sendRequest({
@@ -35,7 +36,8 @@ var docSeed = function () {
     title: 'Third',
     content: 'This is Third',
     private: false,
-    role: 'regular'
+    role: 'regular',
+    UserId: 2
   });
 
   sendRequest({
@@ -43,7 +45,8 @@ var docSeed = function () {
     title: 'Fourth',
     content: 'This is Fourth',
     private: false,
-    role: 'regular'
+    role: 'regular',
+    UserId: 1
   });
 
   sendRequest({
@@ -51,7 +54,8 @@ var docSeed = function () {
     title: 'Five',
     content: 'This is Fifth',
     private: true,
-    role: 'regular'
+    role: 'regular',
+    UserId: 2
   });
 
   sendRequest({
@@ -59,7 +63,8 @@ var docSeed = function () {
     title: 'Six',
     content: 'This is Six',
     private: false,
-    role: 'regular'
+    role: 'regular',
+    UserId: 2
   });
 
   sendRequest({
@@ -67,7 +72,8 @@ var docSeed = function () {
     title: 'Seven',
     content: 'This is Seven',
     private: false,
-    role: 'regular'
+    role: 'regular',
+    UserId: 1
   });
 
   sendRequest({
@@ -75,7 +81,8 @@ var docSeed = function () {
     title: 'Eight',
     content: 'This is Eight',
     private: false,
-    role: 'regular'
+    role: 'regular',
+    UserId: 1
   });
 
   sendRequest({
@@ -91,7 +98,8 @@ var docSeed = function () {
     title: 'Ten',
     content: 'This is Ten',
     private: false,
-    role: 'regular'
+    role: 'regular',
+    UserId: 2
   });
 };
 
