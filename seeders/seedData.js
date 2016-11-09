@@ -45,6 +45,9 @@ const docData = [
   },
   { ownerId: 2, title: 'Ten', content: 'This is Ten',
     private: false, role: 'regular', UserId: 2
+  },
+  { ownerId: 2, title: 'Test last', content: 'This is last',
+    private: false, role: 'regular', UserId: 2
   }
 ];
 

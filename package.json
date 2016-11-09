@@ -4,6 +4,7 @@
   "description": "An app used to manage documents",
   "main": "server.js",
   "scripts": {
+    "seed": "node seeders/seedData.js",
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "repository": {
