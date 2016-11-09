@@ -7,6 +7,8 @@ const expect = require('chai').expect;
 const request = require('supertest')(app);
 const altrequest = require('request');
 const docSeed = require('../seeders/docSeed');
+const userSeed = require('../seeders/userSeed');
+userSeed();
 docSeed();
 
 describe('Document', () => {
