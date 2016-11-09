@@ -5,4 +5,3 @@ before_script:
 - npm install express
 - npm install jasmine
 - npm install jasmine-spec-reporter
-- npm install supertest
