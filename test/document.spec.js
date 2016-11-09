@@ -6,8 +6,6 @@ const token = config.token;
 const expect = require('chai').expect;
 const request = require('supertest')(app);
 const altrequest = require('request');
-const docSeed = require('../seeders/docSeed');
-docSeed();
 
 describe('Document', () => {
   before((done) => {
