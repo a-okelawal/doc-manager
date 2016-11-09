@@ -51,14 +51,15 @@ const docData = [
   }
 ];
 
-return (fieldData) => {
-  Role.bulkCreate(roleData).then((req, res) => {
-    User.bulkCreate(userData).then((req, res)=> {
+models.sequelize.sync({logging: false})
+.then(() => {
+  Role.bulkCreate(roleData).then((role) => {
+    User.bulkCreate(userData).then((user)=> {
       Document.bulkCreate(docData).then();
     }).catch((err, res) => {
       res.send(err);
     });
   }).catch((err, res) => {
-    res.send(err);
+    throw new Error(err.message);
   });
-};
+});

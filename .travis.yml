@@ -3,8 +3,5 @@ node_js:
   - "6.0"
 services:
   - postgresql
-before_script:
-  - psql -c 'DROP DATABASE IF EXISTS doc_store;' -U postgres
-  - psql -c 'CREATE DATABASE doc_store;' -U postgres
 script:
   - npm test

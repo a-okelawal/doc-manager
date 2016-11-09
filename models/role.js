@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
     classMethods: {
       associate: (models) => {
         // associations can be defined here
-        models.Role.hasMany(models.User);
       },
       all: (models, callback) => {
         return models.Role.findAll({}).then(function(roles){
@@ -54,6 +53,6 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   });
-  Role.sync();
+  // Role.sync();
   return Role;
 };

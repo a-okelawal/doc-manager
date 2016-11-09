@@ -16,7 +16,11 @@ module.exports = (sequelize, DataTypes) => {
     classMethods: {
       associate: (models) => {
         // associations can be defined here
-        Document.belongsTo(models.User);
+        Document.belongsTo(models.User, {
+          foreignKey: {
+            allowNull: false
+          }
+        });
       },
       all: (models, ownerId, callback) => {
         models.Document.findAll({
@@ -36,11 +40,13 @@ module.exports = (sequelize, DataTypes) => {
           title: req.body.title,
           content: req.body.content || '',
           private: req.body.private || false,
-          role: req.body.role
-        }).then(() => {
+          role: req.body.role,
+          UserId: req.session.id || 1
+        }).then((document) => {
           res.send({message: 'Document Created.'});
-        }).catch(() => {
+        }).catch((err) => {
           res.send({message: 'Document title already exists.'});
+          throw new Error(err.message);
         });
       },
       findDoc: (req, res) => {
@@ -159,6 +165,6 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   });
-  Document.sync();
+  // Document.sync();
   return Document;
 };

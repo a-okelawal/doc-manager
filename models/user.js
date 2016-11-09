@@ -28,8 +28,12 @@ module.exports = function(sequelize, DataTypes) {
       },
       associate: function(models) {
         // associations can be defined here
-        User.belongsTo(models.Role);
-        User.hasMany(models.Document);
+        User.belongsTo(models.Role, {
+          foreignKey: {
+            defaultValue: 2,
+            allowNull: false
+          }
+        });
       },
       decrypt: function(encrypted) {
         return crypto.AES.decrypt(encrypted, config.secret).toString(crypto.enc.Utf8);
@@ -42,8 +46,10 @@ module.exports = function(sequelize, DataTypes) {
           where: {
             username: req.params.username
           }
-        }).then(function(user){
+        }).then((user) => {
           res.send(user);
+        }).catch((err) => {
+          res.send({message: 'Problem occured: ' + err.message});
         });
       },
       login: (req, res) => {
@@ -120,10 +126,10 @@ module.exports = function(sequelize, DataTypes) {
             lastname: body.lastname || user.lastname,
             email: body.email || user.email,
             password: User.encrypt(password),
-            RoleId: body.roleId || user.roleId
+            RoleId: body.roleId || user.roleId || 1
           }).then((user) => {
             res.status(200).send(user);
-          }).catch(() => {
+          }).catch((err) => {
             res.status(404).send({message: 'No Such User Exists.'});
           });
         }).catch(() => {
@@ -132,6 +138,6 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
-  User.sync();
+  // User.sync();
   return User;
 };
