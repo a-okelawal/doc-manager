@@ -1,4 +1,4 @@
-language: node_js
+44language: node_js
 node_js:
   - "6.0"
 before_script:
@@ -6,3 +6,4 @@ before_script:
 - npm install jasmine
 - npm install jasmine-spec-reporter
 - npm install supertest
+- npm install mocha
