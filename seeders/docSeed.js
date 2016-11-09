@@ -18,17 +18,8 @@ let docSeed = () => {
     title: 'First',
     content: 'This is First',
     private: false,
-<<<<<<< HEAD
-    role: 'regular'
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
     role: 'regular',
     UserId: 1
->>>>>>> develop
   });
 
   sendRequest({
@@ -36,17 +27,8 @@ let docSeed = () => {
     title: 'Second',
     content: 'This is Second',
     private: true,
-<<<<<<< HEAD
-    role: 'regular'
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
     role: 'regular',
     UserId: 1
->>>>>>> develop
   });
 
   sendRequest({
@@ -54,17 +36,8 @@ let docSeed = () => {
     title: 'Third',
     content: 'This is Third',
     private: false,
-<<<<<<< HEAD
-    role: 'regular'
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
     role: 'regular',
     UserId: 2
->>>>>>> develop
   });
 
   sendRequest({
@@ -72,17 +45,8 @@ let docSeed = () => {
     title: 'Fourth',
     content: 'This is Fourth',
     private: false,
-<<<<<<< HEAD
-    role: 'regular'
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
     role: 'regular',
     UserId: 1
->>>>>>> develop
   });
 
   sendRequest({
@@ -90,17 +54,8 @@ let docSeed = () => {
     title: 'Five',
     content: 'This is Fifth',
     private: true,
-<<<<<<< HEAD
-    role: 'regular'
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
     role: 'regular',
     UserId: 2
->>>>>>> develop
   });
 
   sendRequest({
@@ -108,17 +63,8 @@ let docSeed = () => {
     title: 'Six',
     content: 'This is Six',
     private: false,
-<<<<<<< HEAD
-    role: 'regular'
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
     role: 'regular',
     UserId: 2
->>>>>>> develop
   });
 
   sendRequest({
@@ -126,17 +72,8 @@ let docSeed = () => {
     title: 'Seven',
     content: 'This is Seven',
     private: false,
-<<<<<<< HEAD
-    role: 'regular'
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
     role: 'regular',
     UserId: 1
->>>>>>> develop
   });
 
   sendRequest({
@@ -144,17 +81,8 @@ let docSeed = () => {
     title: 'Eight',
     content: 'This is Eight',
     private: false,
-<<<<<<< HEAD
-    role: 'regular'
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
     role: 'regular',
     UserId: 1
->>>>>>> develop
   });
 
   sendRequest({
@@ -162,15 +90,8 @@ let docSeed = () => {
     title: 'Nine',
     content: 'This is Nine',
     private: false,
-    role: 'regular'
-<<<<<<< HEAD
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
->>>>>>> develop
+    role: 'regular',
+    UserId: 1
   });
 
   sendRequest({
@@ -178,17 +99,8 @@ let docSeed = () => {
     title: 'Ten',
     content: 'This is Ten',
     private: false,
-<<<<<<< HEAD
-    role: 'regular'
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
     role: 'regular',
     UserId: 2
->>>>>>> develop
   });
 };
 

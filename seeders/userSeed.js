@@ -20,14 +20,6 @@ const userSeed = () => {
     email: 'loluTemi@test.com',
     password: 'Telo',
     roleId: 1
-<<<<<<< HEAD
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
->>>>>>> develop
   });
 
   sendRequest({
@@ -37,14 +29,6 @@ const userSeed = () => {
     email: 'loluTolu@test.com',
     password: 'Tolo',
     roleId: 2
-<<<<<<< HEAD
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
->>>>>>> develop
   });
 };
 

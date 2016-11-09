@@ -8,9 +8,6 @@ function sendRequest(fieldData) {
     'Content-Type': 'application/json',
     'x-access-token': token
   }
-<<<<<<< HEAD
-  }, function() {
-=======
 },() => {
   });
 }
@@ -18,19 +15,10 @@ function sendRequest(fieldData) {
 const roleSeed = () => {
   sendRequest({
     title: 'admin'
->>>>>>> develop
   });
 
   sendRequest({
     title: 'regular'
-<<<<<<< HEAD
-  }, headers: {
-    'Content-Type': 'application/json',
-    'x-access-token': token
-  }
-  }, function() {
-=======
->>>>>>> develop
   });
 };
 
