@@ -1,3 +1,5 @@
+![Code Climate](https://codeclimate.com/github/andela-abisoye/doc-manager/badges/gpa.svg)
+
 # Document Manager
 This is a document management system.
 
