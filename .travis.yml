@@ -1,8 +1,0 @@
-language: node_js
-node_js:
-  - "6.0"
-before_script:
-- npm install express
-- npm install jasmine
-- npm install jasmine-spec-reporter
-- npm install supertest
