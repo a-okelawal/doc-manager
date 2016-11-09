@@ -4,6 +4,7 @@ node_js:
 services:
   - postgresql
 before_script:
+  - psql -c 'drop database doc_store;' -U postgres
   - psql -c 'create database doc_store;' -U postgres
 script:
   - npm test
