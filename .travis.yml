@@ -6,4 +6,3 @@ before_script:
 - npm install jasmine
 - npm install jasmine-spec-reporter
 - npm install supertest
-- npm install mocha
