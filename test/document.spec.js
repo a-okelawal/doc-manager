@@ -6,12 +6,6 @@ const token = config.token;
 const expect = require('chai').expect;
 const request = require('supertest')(app);
 const altrequest = require('request');
-const docSeed = require('../seeders/docSeed');
-const userSeed = require('../seeders/userSeed');
-const roleSeed = require('../seeders/roleSeed');
-roleSeed();
-userSeed();
-docSeed();
 
 describe('Document', () => {
   before((done) => {

@@ -5,5 +5,6 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database doc_store;' -U postgres
+  - node seeders/seedData.js
 script:
   - npm test

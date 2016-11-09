@@ -6,8 +6,6 @@ const token = config.token;
 const expect = require('chai').expect;
 const request = require('supertest')(app);
 const models = require('../models/index');
-const roleSeed = require('../seeders/roleSeed');
-roleSeed();
 const Role = models.Role;
 let second = 0;
 

@@ -7,10 +7,6 @@ const expect = require('chai').expect;
 const request = require('supertest')(app);
 const altrequest = require('request');
 const models = require('../models/index');
-const userSeed = require('../seeders/userSeed');
-const roleSeed = require('../seeders/roleSeed');
-roleSeed();
-userSeed();
 const User = models.User;
 let second = 0;
 
