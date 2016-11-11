@@ -4,3 +4,4 @@ test.js
 config.js
 routes.js
 seed.js
+coverage
