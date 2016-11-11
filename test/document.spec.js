@@ -122,7 +122,7 @@ describe('Document', () => {
     request.get('/api/documents').set('x-access-token', adminToken).set('Accept', 'application/json').expect(200).end(
       (req, res) => {
         expect((res.body).length).to.equal(second);
-        expect(res.body[0].createdAt).to.be.at.most(res.body[1].createdAt);
+        expect(res.body[0].createdAt).to.be.at.least(res.body[1].createdAt);
         done();
       }
     );

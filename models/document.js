@@ -23,12 +23,12 @@ module.exports = (sequelize, DataTypes) => {
         });
       },
       all: (req, res) => {
-        let queries = {order:[
-          ['createdAt', 'DESC']
-        ]};
+        let queries = {};
 
         if(req.decoded.RoleId === 1) {
-          queries = {};
+          queries = {order:[
+            ['createdAt', 'DESC']
+          ]};
         } else {
           queries = {order:[
             ['createdAt', 'DESC']
