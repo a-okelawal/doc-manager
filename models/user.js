@@ -84,8 +84,9 @@ module.exports = function(sequelize, DataTypes) {
             res.send({message: 'A user is already logged in.'});
           } else if(user) {
             if(req.body.password === User.decrypt(user.password)) {
-              var token = jwt.sign(user.dataValues, config.secret, {expiresIn: 60*60*60*24});
-              res.send({message: 'You are logged in.', token: token});
+              res.send({
+                message: 'You are logged in.',
+                token: jwt.sign(user.dataValues, config.secret, {expiresIn: 60*60*60*24})});
             } else {
               res.send({message: 'Wrong Password.'});
             }
@@ -111,8 +112,7 @@ module.exports = function(sequelize, DataTypes) {
           password: User.encrypt(req.body.password),
           RoleId: req.body.roleId
         }).then((user) => {
-          let token = jwt.sign(user.dataValues, config.secret, {expiresIn: 60*60*60*24});
-          user.dataValues.token = token;
+          user.dataValues.token = jwt.sign(user.dataValues, config.secret, {expiresIn: 60*60*60*24});
           res.status(201).send(user);
         }).catch((err) => {
           res.status(400).send({message: 'User not created.', error: err.message});

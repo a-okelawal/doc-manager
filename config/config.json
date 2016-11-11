@@ -7,8 +7,13 @@
     "dialect": "postgres"
   },
   "test": {
+<<<<<<< HEAD
     "username": "root",
     "password": null,
+=======
+    "username": "postgres",
+    "password": "postgress",
+>>>>>>> develop
     "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "mysql"
