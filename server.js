@@ -39,11 +39,11 @@ app.use((req, res, next) => {
 
 //Set router authentication
 app.use((req, res, next) => {
-  if(req.path === '/api/users/login') {
+  if(req.path === '/api/users/login' || (req.path === '/api/users' && req.method === 'POST')) {
     next();
   } else {
     //Check body or params for token
-    let token = req.session.token || req.body.token || req.query.token || req.headers['x-access-token'];
+    let token = req.body.token || req.query.token || req.headers['x-access-token'];
     if(token) {
       //decode token
       jwt.verify(token, app.get('superSecret'),  (err, decoded) => {
