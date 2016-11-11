@@ -9,18 +9,34 @@ const User = models.User;
 router.route('/users').post((req, res) => {
   User.register(req, res);
 }).get((req, res) => {
-  User.all(res);
+  if(req.decoded.RoleId === 1) {
+    User.all(res);
+  } else {
+    res.status(401).send({message: 'Access denied.'});
+  }
 }).delete((req, res) => {
-  User.remove(req.body, res);
+  if(req.decoded.RoleId === 1 || req.body.username === req.decoded.username) {
+    User.remove(req, res);
+  } else {
+    res.status(401).send({message: 'Access denied.'});
+  }
 });
 
 //Route for username parameter
 router.route('/users/:username').get((req, res) => {
   User.findUser(req, res);
 }).put((req, res) => {
-  User.updateUser(req, res);
+  if(req.decoded.RoleId === 1 || req.params.username === req.decoded.username) {
+    User.updateUser(req, res);
+  } else {
+    res.status(401).send({message: 'Access denied.'});
+  }
 }).delete((req, res) => {
-  User.remove(req.params, res);
+  if(req.decoded.RoleId === 1 || req.params.username === req.decoded.username) {
+    User.remove(req, res);
+  } else {
+    res.status(401).send({message: 'Access denied.'});
+  }
 });
 
 //login route

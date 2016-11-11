@@ -7,13 +7,13 @@ let Document = models.Document;
 router.route('/documents').post((req, res) => {
   Document.createDoc(req, res);
 }).get((req, res) => {
-  Document.get(req, res);
+  Document.all(req, res);
 }).delete((req, res) => {
   Document.remove(req.body, res);
 });
 
 router.route('/documents/:title').get((req, res) => {
-  Document.findDoc(req, res);
+  Document.findDoc(req, res, models);
 }).put((req, res) => {
   Document.updateDoc(req, res);
 }).delete((req, res) => {

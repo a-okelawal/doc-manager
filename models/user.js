@@ -8,22 +8,44 @@ module.exports = function(sequelize, DataTypes) {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: true
+      },
       unique: true
     },
-    lastname: DataTypes.STRING,
-    firstname: DataTypes.STRING,
+    lastname: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true
+      }
+    },
+    firstname: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true
+      }
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: true
+      },
       unique: true
     },
     password: DataTypes.STRING,
-    RoleId: DataTypes.INTEGER
+    RoleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 2
+    }
   }, {
     classMethods: {
       all: (res) => {
         User.findAll({}).then(function(users){
-          res.status(200).send(users);
+          res.status(302).send(users);
         });
       },
       associate: function(models) {
@@ -47,9 +69,9 @@ module.exports = function(sequelize, DataTypes) {
             username: req.params.username
           }
         }).then((user) => {
-          res.send(user);
+          res.status(302).send(user);
         }).catch((err) => {
-          res.send({message: 'Problem occured: ' + err.message});
+          res.status(404).send({message: 'Problem occured: ' + err.message});
         });
       },
       login: (req, res) => {
@@ -58,17 +80,12 @@ module.exports = function(sequelize, DataTypes) {
             username: req.body.username
           }
         }).then(function(user){
-          if(req.session.userId !== undefined) {
+          if(req.decoded) {
             res.send({message: 'A user is already logged in.'});
           } else if(user) {
             if(req.body.password === User.decrypt(user.password)) {
               var token = jwt.sign(user.dataValues, config.secret, {expiresIn: 60*60*60*24});
-
-              req.session.userId = user.id;
-              req.session.userRole = user.RoleId;
-              req.session.token = token;
-
-              res.send({message: 'You are logged in.'});
+              res.send({message: 'You are logged in.', token: token});
             } else {
               res.send({message: 'Wrong Password.'});
             }
@@ -78,37 +95,42 @@ module.exports = function(sequelize, DataTypes) {
         });
       },
       logout: (req, res) => {
-        if(req.session.userId !== undefined) {
-          req.session = undefined;
+        if(req.decoded.userId !== undefined) {
+          req.decoded = undefined;
           res.send({message: 'User has been logged out.'});
         } else {
           res.send({message: 'There is no logged in user.'});
         }
       },
       register: (req, res) => {
-        let body = req.body;
         User.create({
-          username: body.username,
-          firstname: body.firstname,
-          lastname: body.lastname,
-          email: body.email,
-          password: User.encrypt(body.password),
-          RoleId: body.roleId
-        }).then(() => {
-          res.send({message: 'User created successfully.'});
-        }).catch(() => {
-          res.status(400).send({message: 'User email must be unique and contain last and first name.'});
+          username: req.body.username,
+          firstname: req.body.firstname,
+          lastname: req.body.lastname,
+          email: req.body.email,
+          password: User.encrypt(req.body.password),
+          RoleId: req.body.roleId
+        }).then((user) => {
+          let token = jwt.sign(user.dataValues, config.secret, {expiresIn: 60*60*60*24});
+          user.dataValues.token = token;
+          res.status(201).send(user);
+        }).catch((err) => {
+          res.status(400).send({message: 'User not created.', error: err.message});
         });
       },
       remove: (req, res) => {
+        let tempHolder = req.body || req.params;
         User.destroy({
           where: {
-            username: req.username
+            username: tempHolder.username
           }
-        }).then(function(){
+        }).then(() => {
+          if(tempHolder.username === req.decoded.username) {
+            req.decoded = {};
+          }
           res.send({message: 'User deleted.'});
-        }).catch(function() {
-          res.status(404).send({message: 'User not found.'});
+        }).catch((err) => {
+          res.status(404).send({message: 'User not deleted.', error: err.message});
         });
       },
       updateUser: (req, res) => {
@@ -130,7 +152,7 @@ module.exports = function(sequelize, DataTypes) {
           }).then((user) => {
             res.status(200).send(user);
           }).catch((err) => {
-            res.status(404).send({message: 'No Such User Exists.'});
+            res.status(404).send({message: 'No Such User Exists.', error: err.message});
           });
         }).catch(() => {
           res.status(400).send({message: 'Username or email is needed to find user.'});

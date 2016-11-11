@@ -12,9 +12,11 @@ module.exports = (sequelize, DataTypes) => {
       associate: (models) => {
         // associations can be defined here
       },
-      all: (models, callback) => {
-        return models.Role.findAll({}).then(function(roles){
-          callback(null, roles);
+      all: (req, res) => {
+        Role.findAll({}).then(function(roles){
+          res.status(302).send(roles);
+        }).catch((err) => {
+          res.send(err.message);
         });
       },
       createRole: (req, res) => {

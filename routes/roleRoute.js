@@ -6,11 +6,17 @@ const models = require('../models/index');
 const Role = models.Role;
 
 router.route('/roles').post((req, res) => {
-  Role.createRole(req, res);
-}).get(function(req, res){
-  Role.all(models, (err, data) => {
-    return res.send(data);
-  });
+  if(req.decoded.RoleId === 1) {
+    Role.createRole(req, res);
+  } else {
+    res.status(401).send({message: 'Access denied.'});
+  }
+}).get((req, res) => {
+  if(req.decoded.RoleId === 1) {
+    Role.all(req, res);
+  } else {
+    res.status(401).send({message: 'Access denied.'});
+  }
 }).delete((req, res) => {
   Role.remove(req, res);
 });
