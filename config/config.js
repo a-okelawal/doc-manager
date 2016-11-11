@@ -1,4 +1,7 @@
-{
+'use strict';
+const dotenv = require('dotenv').config();
+
+module.exports = {
   "development": {
     "username": "postgres",
     "password": "postgress",
@@ -8,10 +11,10 @@
   },
   "test": {
     "username": "postgres",
-    "password": "postgress",
+    "password": process.env.TEST_DB_PASS || null,
     "database": "database_test",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "postgres"
   },
   "production": {
     "username": "root",
