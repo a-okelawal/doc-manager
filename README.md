@@ -1,6 +1,4 @@
-![Code Climate](https://codeclimate.com/github/andela-abisoye/doc-manager/badges/gpa.svg)
-
-![Travis Build](https://travis-ci.org/andela-abisoye/doc-manager.svg?branch=develop)
+![Code Climate](https://codeclimate.com/github/andela-abisoye/doc-manager/badges/gpa.svg) ![Travis Build](https://travis-ci.org/andela-abisoye/doc-manager.svg?branch=develop) [![Coverage Status](https://coveralls.io/repos/github/andela-abisoye/doc-manager/badge.svg?branch=develop)](https://coveralls.io/github/andela-abisoye/doc-manager?branch=develop)
 
 # Document Manager
 This is a document management system.
