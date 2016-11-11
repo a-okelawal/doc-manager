@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     content: DataTypes.STRING,
-    private: DataTypes.BOOLEAN,
+    access: DataTypes.STRING,
     role: DataTypes.STRING,
     UserId: DataTypes.INTEGER
   }, {
@@ -22,65 +22,12 @@ module.exports = (sequelize, DataTypes) => {
           }
         });
       },
-      all: (models, ownerId, callback) => {
-        models.Document.findAll({
-          order: [
-            ['createdAt', 'DESC']
-          ],
-          where: {
-            ownerId: ownerId
-          }
-        }).then(function(documents) {
-          callback(null, documents);
-        });
-      },
-      createDoc: (req, res) => {
-        Document.create({
-          ownerId: req.body.ownerId,
-          title: req.body.title,
-          content: req.body.content || '',
-          private: req.body.private || false,
-          role: req.body.role,
-          UserId: req.session.id || 1
-        }).then((document) => {
-          res.send({message: 'Document Created.'});
-        }).catch((err) => {
-          res.send({message: 'Document title already exists.'});
-          throw new Error(err.message);
-        });
-      },
-      findDoc: (req, res) => {
-        Document.findOne({
-          where: {
-            title: req.params.title
-          }
-        }).then((document) => {
-          res.send(document);
-        });
-      },
-      findOwnersDoc: (req, res) => {
-        Document.findAll({
-          where: {
-            $or: [
-              {
-                ownerId: {
-                  $eq: req.body.email
-                }
-              }, {
-                private: {
-                  $eq: false
-                }
-              }
-            ]
-          }
-        }).then((document) => {
-          res.send(document);
-        });
-      },
-      get: (req, res) => {
-        let queries = {};
+      all: (req, res) => {
+        let queries = {order:[
+          ['createdAt', 'DESC']
+        ]};
 
-        if(req.session.userRole === 1) {
+        if(req.decoded.RoleId === 1) {
           queries = {};
         } else {
           queries = {order:[
@@ -92,12 +39,12 @@ module.exports = (sequelize, DataTypes) => {
               $or: [
                 {
                   ownerId : {
-                    $eq: req.session.userId
+                    $eq: req.decoded.id
                   }
                 },
                 {
-                  private: {
-                    $eq: false
+                  access: {
+                    $eq: 'public'
                   }
                 }
               ]
@@ -131,6 +78,65 @@ module.exports = (sequelize, DataTypes) => {
           res.send(docs);
         });
       },
+      createDoc: (req, res) => {
+        Document.create({
+          ownerId: req.decoded.userId,
+          title: req.body.title,
+          content: req.body.content || '',
+          access: req.body.access || 'public',
+          role: req.body.role || 'regular',
+          UserId: req.decoded.userId || 1
+        }).then((document) => {
+          res.send({message: 'Document Created.', document});
+        }).catch((err) => {
+          res.send({message: 'Document title already exists.', error: err.message});
+          throw new Error(err.message);
+        });
+      },
+      findDoc: (req, res, models) => {
+        Document.findOne({
+          where: {
+            title: req.params.title
+          }
+        }).then((document) => {
+          if(document.access === 'role') {
+            models.Role.findOne({
+              title: document.role
+            }).then((role) => {
+              if(role.id === req.decoded.RoleId) {
+                res.status(302).send(document);
+              } else {
+                res.status(401).send({message: 'Access denied: Unauthorized Role.'});
+              }
+            });
+          } else {
+            if(req.decoded.id === document.ownerId || req.decoded.RoleId === 1) {
+              res.status(302).send(document);
+            } else {
+              res.status(401).send({message: 'Access denied.'});
+            }
+          }
+        });
+      },
+      findOwnersDoc: (req, res) => {
+        Document.findAll({
+          where: {
+            $or: [
+              {
+                ownerId: {
+                  $eq: req.body.email
+                }
+              }, {
+                access: {
+                  $eq: 'public'
+                }
+              }
+            ]
+          }
+        }).then((document) => {
+          res.send(document);
+        });
+      },
       remove: (req, res) => {
         Document.destroy({
           where: {
@@ -154,7 +160,7 @@ module.exports = (sequelize, DataTypes) => {
             ownerId: body.ownerId || document.ownerId,
             title: body.title || document.title,
             content: body.content || document.content,
-            private: body.private || document.private,
+            access: body.access || document.access,
             role: body.role || document.role
           }).then((document) => {
             res.send(document);

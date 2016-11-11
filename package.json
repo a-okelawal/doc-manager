@@ -4,11 +4,11 @@
   "description": "An app used to manage documents",
   "main": "server.js",
   "scripts": {
-    "set-db": "dropdb --if-exists doc_store && createdb doc_store",
-    "seed": "node seeders/seedData.js",
+    "set-db": "dropdb --if-exists doc_store_test && createdb doc_store_test",
+    "seed": "NODE_ENV=test node seeders/seedData.js",
     "moch": "./node_modules/.bin/mocha --reporter spec",
-    "test": "npm run set-db && npm run seed && npm run moch",
-    "start": "npm run seed && node server.js"
+    "test": "npm run set-db && npm run seed && NODE_ENV=test npm run moch",
+    "start": "NODE_ENV=test npm run seed && node server.js"
   },
   "repository": {
     "type": "git",
