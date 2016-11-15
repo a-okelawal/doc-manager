@@ -58,7 +58,7 @@ describe('Role', () => {
 
   it(' should validate all roles are returned on Roles.all.', (done) => {
     request.get('/api/roles').set('x-access-token', adminToken)
-    .set('Accept', 'application/json').expect(302)
+    .set('Accept', 'application/json').expect(200)
     .end((req, res) => {
       expect((res.body).length).to.equal(second);
       done();
@@ -72,7 +72,7 @@ describe('Role', () => {
 
   it(' should validate all roles are returned on Roles.all.', (done) => {
     request.get('/api/roles').set('x-access-token', adminToken)
-    .set('Accept', 'application/json').expect(302)
+    .set('Accept', 'application/json').expect(200)
     .end((req, res) => {
       let count = 0;
       (res.body).forEach((role) => {

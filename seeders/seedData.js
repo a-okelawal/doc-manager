@@ -19,6 +19,9 @@ const userData = [
   },
   { firstname: 'admin', lastname: 'admin', username: 'admin',
     email: 'admin@power.com', password: User.encrypt('admin'), RoleId: 1
+  },
+  { firstname: 'tutu', lastname: 'Tulani', username: 'tutu',
+    email: 'tut@power.com', password: User.encrypt('tutu'), RoleId: 1
   }
 ];
 

@@ -104,14 +104,14 @@ module.exports = (sequelize, DataTypes) => {
               title: document.role
             }).then((role) => {
               if(role.id === req.decoded.RoleId) {
-                res.status(302).send(document);
+                res.status(200).send(document);
               } else {
                 res.status(401).send({message: 'Access denied: Unauthorized Role.'});
               }
             });
           } else {
             if(req.decoded.id === document.ownerId || req.decoded.RoleId === 1) {
-              res.status(302).send(document);
+              res.status(200).send(document);
             } else {
               res.status(401).send({message: 'Access denied.'});
             }
@@ -163,8 +163,12 @@ module.exports = (sequelize, DataTypes) => {
             access: body.access || document.access,
             role: body.role || document.role
           }).then((document) => {
-            res.send(document);
-          }).catch(() => {
+            if(req.decoded.RoleId === 1 || document.UserId === req.decoded.id) {
+              res.send(document);
+            } else {
+              res.status(401).send({message: 'Access Denied.'});
+            }
+          }).catch((error) => {
             res.status(404).send({message: 'Document does not exist.'});
           });
         });
