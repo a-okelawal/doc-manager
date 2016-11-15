@@ -36,7 +36,7 @@ describe('Search', () => {
     let query = (temp.getMonth() + 1) + '-' + temp.getDate();
     request.get('/api/documents?limit=5&date=2016-' + query).set('x-access-token', token).set('Accept', 'application/json').expect(200).end(
       (req, res) => {
-        let result = new Date('2016' + query);
+        let result = new Date('2016-' + query);
         result.setDate(result.getDate() + 1);
         expect(res.body).to.have.length.of.at.most(5);
         expect(new Date(res.body[0].createdAt)).to.be.below(result);

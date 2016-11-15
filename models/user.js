@@ -45,7 +45,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       all: (res) => {
         User.findAll({}).then(function(users){
-          res.status(302).send(users);
+          res.status(200).send(users);
         });
       },
       associate: function(models) {
@@ -69,7 +69,7 @@ module.exports = function(sequelize, DataTypes) {
             username: req.params.username
           }
         }).then((user) => {
-          res.status(302).send(user);
+          res.status(200).send(user);
         }).catch((err) => {
           res.status(404).send({message: 'Problem occured: ' + err.message});
         });

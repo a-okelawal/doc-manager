@@ -86,7 +86,6 @@ describe('Document', () => {
     request.post('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
       title: 'tobe',
       content: 'Deleted',
-      access: 'public',
       role: 'regular'
     }).expect(200).end((req, res) => {
       expect(res.body.document.access).to.equal('public');
@@ -111,7 +110,7 @@ describe('Document', () => {
   });
 
   it('should ensure that on access = role, only user with same role can retrieve the document.', (done) => {
-    request.get('/api/documents/Eight').set('x-access-token', otherToken).set('Accept', 'application/json').expect(200)
+    request.get('/api/documents/Eight').set('x-access-token', otherToken).set('Accept', 'application/json').expect(401)
     .end((req, res) => {
       expect(res.body.message).to.equal('Access denied: Unauthorized Role.');
       done();
@@ -152,6 +151,15 @@ describe('Document', () => {
       content: 'This is change'
     }).expect(200).end((err, res) => {
       expect(res.body.content).to.equal('This is change');
+      done();
+    });
+  });
+
+  it('should validate that users can update details.', (done) => {
+    request.put('/api/documents/Another').set('x-access-token', otherToken).set('Accept', 'application/json').send({
+      content: 'This is change'
+    }).expect(200).end((err, res) => {
+      expect(res.body.message).to.equal('Access Denied.');
       done();
     });
   });

@@ -72,7 +72,6 @@ describe('User', () => {
       password: 'abilaw'
     })
     .expect(201).end((err, res) => {
-      console.log(res.body);
       expect(res.body.RoleId).to.equal(2);
       done();
     });
@@ -80,7 +79,7 @@ describe('User', () => {
 
   it('should validate that new users create First and Last names.', (done) => {
     request.get('/api/users/adlaw').set('x-access-token', token).set('Accept', 'application/json')
-    .expect(302).end((err, res) => {
+    .expect(200).end((err, res) => {
       expect(res.body.lastname).to.equal('Law');
       expect(res.body.firstname).to.equal('Ade');
       done();
@@ -104,7 +103,7 @@ describe('User', () => {
 
   it('should validate that all users are returned.', (done) => {
     request.get('/api/users').set('x-access-token', adminToken).set('Accept', 'application/json')
-    .expect(302).end((err, res) => {
+    .expect(200).end((err, res) => {
       expect(res.body.length).to.equal(second);
       done();
     });
@@ -135,15 +134,30 @@ describe('User', () => {
     }).expect(401).expect({message: 'Access denied.'}).end(done);
   });
 
+  it('should ensure non-admin users can only update their profiles.', (done) => {
+    request.put('/api/users/tutu').set('x-access-token', adminToken).set('Accept', 'application/json').send({
+      username: 'tunatuna'
+    }).expect(200).end((err, res) => {
+      expect(res.body.username).to.equal('tunatuna');
+      done();
+    });
+  });
+
   it('should ensure non-admin users can only delete themselves.', (done) => {
     request.delete('/api/users/admin').set('x-access-token', token).set('Accept', 'application/json').send({
       username: 'admin'
     }).expect(401).expect({message: 'Access denied.'}).end(done);
   });
 
-  it('should ensure user can be deleted.', (done) => {
+  it('should ensure user can be deleted by his/her ownself.', (done) => {
     request.delete('/api/users').set('x-access-token', token).set('Accept', 'application/json').send({
       username: 'adlaw'
+    }).expect(200).expect({message: 'User deleted.'}).end(done);
+  });
+
+  it('should ensure user can be deleted by admin.', (done) => {
+    request.delete('/api/users').set('x-access-token', adminToken).set('Accept', 'application/json').send({
+      username: 'tunatuna'
     }).expect(200).expect({message: 'User deleted.'}).end(done);
   });
 });
