@@ -8,26 +8,16 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const config = require('./config');
 const morgan = require('morgan');
-const cookieSession = require('cookie-session');
 
 //Body parser to get info from body or params
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('dev'));
 
-router.route('/test').get((req, res) => {
-  res.status(200).send({message: 'Got it'});
-});
-
 //Port Configuration
 let port = process.env.PORT || 3030;
 app.set('superSecret', config.secret);
 
-//Set cookie session
-app.use(cookieSession({
-  name: 'session',
-  keys: ['userId, userRole', 'token']
-}));
 
 //test
 app.use((req, res, next) => {

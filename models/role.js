@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       all: (req, res) => {
         Role.findAll({}).then(function(roles){
-          res.status(302).send(roles);
+          res.status(200).send(roles);
         }).catch((err) => {
           res.send(err.message);
         });
