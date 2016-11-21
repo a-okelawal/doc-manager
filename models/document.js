@@ -87,8 +87,7 @@ export default (sequelize, DataTypes) => {
         }).then((document) => {
           res.send({ message: 'Document Created.', document });
         }).catch((err) => {
-          res.send({ message: 'Document title already exists.', error: err.message });
-          throw new Error(err.message);
+          res.status(400).send({ message: 'Document title already exists.', error: err.message });
         });
       },
       findDoc: (req, res, models) => {
@@ -138,10 +137,12 @@ export default (sequelize, DataTypes) => {
           where: {
             title: req.title
           }
-        }).then(() => {
-          res.send({ message: 'Document deleted.' });
-        }).catch(() => {
-          res.status(400).send({ message: 'Bad Request.' });
+        }).then((status) => {
+          if (status === 1) {
+            res.send({ message: 'Document deleted.' });
+          } else {
+            res.status(400).send({ message: 'Bad Request.' });
+          }
         });
       },
       updateDoc: (req, res) => {
@@ -150,23 +151,25 @@ export default (sequelize, DataTypes) => {
             title: req.params.title
           }
         }).then((data) => {
-          const document = data.dataValues;
-          const body = req.body;
-          data.update({
-            ownerId: body.ownerId || document.ownerId,
-            title: body.title || document.title,
-            content: body.content || document.content,
-            access: body.access || document.access,
-            role: body.role || document.role
-          }).then((updatedDocument) => {
-            if (req.decoded.RoleId === 1 || updatedDocument.UserId === req.decoded.id) {
-              res.send(updatedDocument);
-            } else {
-              res.status(401).send({ message: 'Access Denied.' });
-            }
-          }).catch(() => {
+          if (data) {
+            const document = data.dataValues;
+            const body = req.body;
+            data.update({
+              ownerId: body.ownerId || document.ownerId,
+              title: body.title || document.title,
+              content: body.content || document.content,
+              access: body.access || document.access,
+              role: body.role || document.role
+            }).then((updatedDocument) => {
+              if (req.decoded.RoleId === 1 || updatedDocument.UserId === req.decoded.id) {
+                res.send(updatedDocument);
+              } else {
+                res.status(401).send({ message: 'Access Denied.' });
+              }
+            });
+          } else {
             res.status(404).send({ message: 'Document does not exist.' });
-          });
+          }
         });
       }
     }

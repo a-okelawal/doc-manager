@@ -132,6 +132,16 @@ describe('User', () => {
     });
   });
 
+  it('should report when user does not exist.', (done) => {
+    request.get('/api/users/barma').set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .expect(401)
+    .end((err, res) => {
+      expect(res.body.message).to.equal('Valid user name required.');
+      done();
+    });
+  });
+
   it('should validate that users can update details.', (done) => {
     request.put('/api/users/adlaw').set('x-access-token', token).set('Accept', 'application/json').send({
       lastname: 'Lawal',
@@ -152,6 +162,36 @@ describe('User', () => {
     })
     .expect(401)
     .expect({ message: 'Access denied.' })
+    .end(done);
+  });
+
+  it('should ensure only previously created users can update their profiles.', (done) => {
+    request.put('/api/users/adminat').set('x-access-token', adminToken)
+    .set('Accept', 'application/json').send({
+      username: 'adminana'
+    })
+    .expect(400)
+    .expect({ message: 'Username or email is invalid.' })
+    .end(done);
+  });
+
+  it('should ensure correct username and password are required for login.', (done) => {
+    request.post('/api/users/login').set('Accept', 'application/json').send({
+      username: 'admin',
+      password: 'Panting'
+    })
+    .expect(401)
+    .expect({ message: 'Wrong Password.' })
+    .end(done);
+  });
+
+  it('should show when user does not exist for login.', (done) => {
+    request.post('/api/users/login').set('Accept', 'application/json').send({
+      username: 'adminat',
+      password: 'Panting'
+    })
+    .expect(404)
+    .expect({ message: 'User does not exist.' })
     .end(done);
   });
 
@@ -194,6 +234,16 @@ describe('User', () => {
     })
     .expect(200)
     .expect({ message: 'User deleted.' })
+    .end(done);
+  });
+
+  it('should ensure user can be deleted by admin.', (done) => {
+    request.delete('/api/users').set('x-access-token', adminToken)
+    .set('Accept', 'application/json').send({
+      username: 'tunatunafish'
+    })
+    .expect(404)
+    .expect({ message: 'User not deleted.' })
     .end(done);
   });
 });

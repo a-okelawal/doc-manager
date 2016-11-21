@@ -44,7 +44,7 @@ describe('Role', () => {
     });
   });
 
-  before((done) => {
+  beforeEach((done) => {
     Role.findAll({}).then((roles) => {
       second = roles.length;
       done();
@@ -57,6 +57,25 @@ describe('Role', () => {
     })
     .expect(200)
     .expect({ message: 'Role already exists.' })
+    .end(done);
+  });
+
+  it(' should validate the new role created with a unique title was created.', (done) => {
+    request.post('/api/roles').set('x-access-token', adminToken).set('Accept', 'application/json').send({
+      title: 'level 1'
+    })
+    .expect(200)
+    .end((req, res) => {
+      expect(res.body.message).to.equal('Role was created.');
+      done();
+    });
+  });
+
+  it(' should validate the new role cannot be created wiht no title.', (done) => {
+    request.post('/api/roles').set('x-access-token', adminToken).set('Accept', 'application/json').send({
+    })
+    .expect(200)
+    .expect({ message: 'Role title cannot be null.' })
     .end(done);
   });
 
@@ -98,5 +117,14 @@ describe('Role', () => {
       expect(count).to.equal(2);
       done();
     });
+  });
+
+  it(' should validate roles can be deleted.', (done) => {
+    request.delete('/api/roles').set('x-access-token', adminToken).set('Accept', 'application/json').send({
+      title: 'level 1'
+    })
+    .expect(200)
+    .expect({ message: 'Destroyed.' })
+    .end(done);
   });
 });

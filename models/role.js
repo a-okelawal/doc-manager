@@ -28,15 +28,11 @@ export default (sequelize, DataTypes) => {
           } else if (req.body.title) {
             Role.create({
               title: req.body.title
-            }).then((err) => {
-              if (err) {
-                res.send(err);
-              } else {
-                res.send({ message: 'Role was created.' });
-              }
+            }).then((doc) => {
+              res.send({ message: 'Role was created.', document: doc });
             });
           } else {
-            res.send({ message: 'Role title cannot be null' });
+            res.send({ message: 'Role title cannot be null.' });
           }
         });
       },
@@ -46,11 +42,10 @@ export default (sequelize, DataTypes) => {
             title: req.body.title
           }
         }).then(() => {
-          res.send('Destroyed');
+          res.send({ message: 'Destroyed.' });
         });
       }
     }
   });
-  // Role.sync();
   return Role;
 };

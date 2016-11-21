@@ -98,6 +98,21 @@ describe('Document', () => {
     });
   });
 
+  it('should validate the creation of a new user document.', (done) => {
+    request.post('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
+      ownerId: 1,
+      title: 'Another',
+      content: 'This another document for testing.',
+      access: 'public',
+      role: 'regular'
+    })
+    .expect(400)
+    .end((req, res) => {
+      expect(res.body.message).to.equal('Document title already exists.');
+      done();
+    });
+  });
+
   it('should ensure a document is set to public by default.', (done) => {
     request.post('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
       title: 'tobe',
@@ -179,6 +194,17 @@ describe('Document', () => {
   });
 
   it('should validate that users can update details.', (done) => {
+    request.put('/api/documents/Anothers').set('x-access-token', token).set('Accept', 'application/json').send({
+      content: 'To he that does not exist'
+    })
+    .expect(404)
+    .end((err, res) => {
+      expect(res.body.message).to.equal('Document does not exist.');
+      done();
+    });
+  });
+
+  it('should validate that users can update details.', (done) => {
     request.put('/api/documents/Another').set('x-access-token', otherToken).set('Accept', 'application/json').send({
       content: 'This is change'
     })
@@ -187,6 +213,15 @@ describe('Document', () => {
       expect(res.body.message).to.equal('Access Denied.');
       done();
     });
+  });
+
+  it('should validate that users can only delete documents that exist.', (done) => {
+    request.delete('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
+      title: 'tobena'
+    })
+    .expect(400)
+    .expect({ message: 'Bad Request.' })
+    .end(done);
   });
 
   it('should validate that users can delete document.', (done) => {

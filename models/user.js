@@ -68,9 +68,11 @@ export default (sequelize, DataTypes) => {
             username: req.params.username
           }
         }).then((user) => {
-          res.status(200).send(user);
-        }).catch((err) => {
-          res.status(404).send({ message: 'Problem occured: ' + err.message });
+          if (user) {
+            res.status(200).send(user);
+          } else {
+            res.status(404).send({ message: 'Valid user name required.' });
+          }
         });
       },
       login: (req, res) => {
@@ -79,29 +81,19 @@ export default (sequelize, DataTypes) => {
             username: req.body.username
           }
         }).then((user) => {
-          if (req.decoded) {
-            res.send({ message: 'A user is already logged in.' });
-          } else if (user) {
+          if (user) {
             if (req.body.password === User.decrypt(user.password)) {
               res.send({
                 message: 'You are logged in.',
                 token: jwt.sign(user.dataValues, config.secret, {
                   expiresIn: 60 * 60 * 60 * 24 }) });
             } else {
-              res.send({ message: 'Wrong Password.' });
+              res.status(401).send({ message: 'Wrong Password.' });
             }
           } else {
-            res.send({ message: 'User does not exist.' });
+            res.status(404).send({ message: 'User does not exist.' });
           }
         });
-      },
-      logout: (req, res) => {
-        if (req.decoded.userId !== undefined) {
-          req.decoded = undefined;
-          res.send({ message: 'User has been logged out.' });
-        } else {
-          res.send({ message: 'There is no logged in user.' });
-        }
       },
       register: (req, res) => {
         User.create({
@@ -125,13 +117,15 @@ export default (sequelize, DataTypes) => {
           where: {
             username: tempHolder.username
           }
-        }).then(() => {
-          if (tempHolder.username === req.decoded.username) {
-            req.decoded = {};
+        }).then((status) => {
+          if (status === 1) {
+            if (tempHolder.username === req.decoded.username) {
+              req.decoded = {};
+            }
+            res.send({ message: 'User deleted.' });
+          } else {
+            res.status(404).send({ message: 'User not deleted.' });
           }
-          res.send({ message: 'User deleted.' });
-        }).catch((err) => {
-          res.status(404).send({ message: 'User not deleted.', error: err.message });
         });
       },
       updateUser: (req, res) => {
@@ -152,11 +146,9 @@ export default (sequelize, DataTypes) => {
             RoleId: body.roleId || user.roleId || 1
           }).then((updatedUser) => {
             res.status(200).send(updatedUser);
-          }).catch((err) => {
-            res.status(404).send({ message: 'No Such User Exists.', error: err.message });
           });
         }).catch(() => {
-          res.status(400).send({ message: 'Username or email is needed to find user.' });
+          res.status(400).send({ message: 'Username or email is invalid.' });
         });
       }
     }
