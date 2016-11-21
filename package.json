@@ -4,11 +4,12 @@
   "description": "An app used to manage documents",
   "main": "server.js",
   "scripts": {
+    "babel": "./node_modules/.bin/babel-node",
     "set-db": "dropdb --if-exists database_test && createdb database_test",
-    "seed": "NODE_ENV=test node seeders/seedData.js",
-    "moch": "istanbul cover node_modules/.bin/_mocha --reporter lcovonly -- -- test/*",
+    "seed": "NODE_ENV=test babel-node seeders/seedData.js",
+    "moch": "babel-node ./node_modules/babel-istanbul/lib/cli.js cover node_modules/.bin/_mocha --reporter lcovonly -- -- test/*",
     "test": "npm run set-db && npm run seed && NODE_ENV=test npm run moch",
-    "start": "NODE_ENV=test npm run seed && node server.js",
+    "start": "NODE_ENV=test npm run seed && babel-node server.js --presets es2015,stage-2",
     "coverage": "rm -rf coverage/",
     "coveralls": "cat coverage/lcov.info | coveralls"
   },
@@ -23,26 +24,34 @@
   },
   "homepage": "https://github.com/andela-abisoye/doc-manager#readme",
   "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-istanbul": "^0.11.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-stage-2": "^6.18.0",
+    "babel-register": "^6.18.0",
     "coveralls": "^2.11.14",
     "dotenv": "^2.0.0",
-    "express": "^4.14.0",
+    "eslint": "^3.10.2",
     "istanbul": "^0.4.5",
     "jasmine": "^2.5.2",
     "jasmine-spec-reporter": "^2.7.0",
     "mocha": "^3.1.2",
-    "supertest": "^2.0.1"
+    "nodemon": "^1.11.0"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
     "chai": "^3.5.0",
     "cookie-session": "^1.2.0",
     "crypto-js": "^3.1.8",
+    "express": "^4.14.0",
     "jsonwebtoken": "^7.1.9",
     "morgan": "^1.7.0",
     "mysql": "^2.11.1",
     "pg": "^6.1.0",
     "pg-hstore": "^2.3.2",
     "request": "^2.76.0",
-    "sequelize": "^3.24.5"
+    "sequelize": "^3.24.5",
+    "supertest": "^2.0.1"
   }
 }

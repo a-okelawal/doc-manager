@@ -1,37 +1,44 @@
-'use strict';
+import chai from 'chai';
+import altrequest from 'request';
+import supertest from 'supertest';
+import app from '../server';
+import models from '../models/index';
 
-const app = require('../server');
 let token = '';
 let adminToken = '';
-const expect = require('chai').expect;
-const altrequest = require('request');
-const request = require('supertest')(app);
-const models = require('../models/index');
+const expect = chai.expect;
+const request = supertest(app);
 const Role = models.Role;
 let second = 0;
 
 describe('Role', () => {
   before((done) => {
-    altrequest({url: 'http://localhost:3030/api/users/login', method: 'POST', json: ({
-      username: 'loluTemi',
-      password: 'Telo'
-    }), headers: {
-      'Content-Type': 'application/json'
-    }
-  }, (req, res) => {
+    altrequest({ url: 'http://localhost:3030/api/users/login',
+      method: 'POST',
+      json: ({
+        username: 'loluTemi',
+        password: 'Telo'
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }, (req, res) => {
       token = res.body.token;
       done();
     });
   });
 
   before((done) => {
-    altrequest({url: 'http://localhost:3030/api/users/login', method: 'POST', json: ({
-      username: 'admin',
-      password: 'admin'
-    }), headers: {
-      'Content-Type': 'application/json'
-    }
-  }, (req, res) => {
+    altrequest({ url: 'http://localhost:3030/api/users/login',
+      method: 'POST',
+      json: ({
+        username: 'admin',
+        password: 'admin'
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }, (req, res) => {
       adminToken = res.body.token;
       done();
     });
@@ -47,13 +54,19 @@ describe('Role', () => {
   it(' should validate the new role created has a unique title.', (done) => {
     request.post('/api/roles').set('x-access-token', adminToken).set('Accept', 'application/json').send({
       title: 'admin'
-    }).expect(200).expect({message: 'Role already exists.'}).end(done);
+    })
+    .expect(200)
+    .expect({ message: 'Role already exists.' })
+    .end(done);
   });
 
   it(' should show that a non-admin user cannot create a new role.', (done) => {
     request.post('/api/roles').set('x-access-token', token).set('Accept', 'application/json').send({
       title: 'non-admin'
-    }).expect(401).expect({message: 'Access denied.'}).end(done);
+    })
+    .expect(401)
+    .expect({ message: 'Access denied.' })
+    .end(done);
   });
 
   it(' should validate all roles are returned on Roles.all.', (done) => {
@@ -67,7 +80,9 @@ describe('Role', () => {
 
   it(' should ensure non-admin users cannot access all roles.', (done) => {
     request.get('/api/roles').set('x-access-token', token)
-    .set('Accept', 'application/json').expect(401).expect({message: 'Access denied.'}).end(done);
+    .set('Accept', 'application/json').expect(401)
+    .expect({ message: 'Access denied.' })
+    .end(done);
   });
 
   it(' should validate all roles are returned on Roles.all.', (done) => {
@@ -76,8 +91,8 @@ describe('Role', () => {
     .end((req, res) => {
       let count = 0;
       (res.body).forEach((role) => {
-        if(role.title === 'regular' || role.title === 'admin') {
-          count++;
+        if (role.title === 'regular' || role.title === 'admin') {
+          count += 1;
         }
       });
       expect(count).to.equal(2);

@@ -1,7 +1,5 @@
-'use strict';
-
-module.exports = (sequelize, DataTypes) => {
-  var Role = sequelize.define('Role', {
+export default (sequelize, DataTypes) => {
+  const Role = sequelize.define('Role', {
     title: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -9,11 +7,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     classMethods: {
-      associate: (models) => {
+      associate: () => {
         // associations can be defined here
       },
       all: (req, res) => {
-        Role.findAll({}).then(function(roles){
+        Role.findAll({}).then((roles) => {
           res.status(200).send(roles);
         }).catch((err) => {
           res.send(err.message);
@@ -21,26 +19,24 @@ module.exports = (sequelize, DataTypes) => {
       },
       createRole: (req, res) => {
         Role.findOne({
-          where : {
+          where: {
             title: req.body.title
           }
-        }).then(function(role){
-          if(role) {
-            res.send({message: 'Role already exists.'});
+        }).then((role) => {
+          if (role) {
+            res.send({ message: 'Role already exists.' });
+          } else if (req.body.title) {
+            Role.create({
+              title: req.body.title
+            }).then((err) => {
+              if (err) {
+                res.send(err);
+              } else {
+                res.send({ message: 'Role was created.' });
+              }
+            });
           } else {
-            if(req.body.title) {
-              Role.create({
-                title: req.body.title
-              }).then(function(err){
-                if(err) {
-                  res.send(err);
-                } else {
-                  res.send({message: 'Role was created.'});
-                }
-              });
-            } else {
-              res.send({message: 'Role title cannot be null'});
-            }
+            res.send({ message: 'Role title cannot be null' });
           }
         });
       },
@@ -49,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
           where: {
             title: req.body.title
           }
-        }).then(function(){
+        }).then(() => {
           res.send('Destroyed');
         });
       }
