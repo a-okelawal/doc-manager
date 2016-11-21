@@ -5,3 +5,5 @@ routes.js
 seed.js
 coverage
 .env
+install
+lib

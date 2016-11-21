@@ -1,8 +1,8 @@
-'use strict';
-const express = require('express');
-let router = express.Router();
-const models = require('../models/index');
-let Document = models.Document;
+import express from 'express';
+import models from '../models/index';
+
+const router = express.Router();
+const Document = models.Document;
 
 router.route('/documents').post((req, res) => {
   Document.createDoc(req, res);
@@ -24,4 +24,4 @@ router.route('/users/:id/documents').get((req, res) => {
   Document.findOwnersDoc(req, res);
 });
 
-module.exports = router;
+export default router;
