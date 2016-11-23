@@ -2,7 +2,7 @@ import chai from 'chai';
 import altrequest from 'request';
 import supertest from 'supertest';
 import app from '../server';
-import models from '../models/index';
+import models from '../models';
 
 const expect = chai.expect;
 const request = supertest(app);
@@ -135,7 +135,7 @@ describe('Document', () => {
   });
 
   it('should a user only user can retrieve his private documents.', (done) => {
-    request.get('/api/documents/Second').set('x-access-token', otherToken).set('Accept', 'application/json').expect(401)
+    request.get('/api/documents/Second').set('x-access-token', otherToken).set('Accept', 'application/json').expect(403)
     .end((req, res) => {
       expect(res.body.message).to.equal('Access denied.');
       done();
@@ -143,7 +143,7 @@ describe('Document', () => {
   });
 
   it('should ensure that on access = role, only user with same role can retrieve the document.', (done) => {
-    request.get('/api/documents/Eight').set('x-access-token', otherToken).set('Accept', 'application/json').expect(401)
+    request.get('/api/documents/Eight').set('x-access-token', otherToken).set('Accept', 'application/json').expect(403)
     .end((req, res) => {
       expect(res.body.message).to.equal('Access denied: Unauthorized Role.');
       done();
@@ -182,7 +182,7 @@ describe('Document', () => {
     );
   });
 
-  it('should validate that users can update details.', (done) => {
+  it('should ensure that a user can update his/her document.', (done) => {
     request.put('/api/documents/Another').set('x-access-token', token).set('Accept', 'application/json').send({
       content: 'This is change'
     })
@@ -219,8 +219,8 @@ describe('Document', () => {
     request.delete('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
       title: 'tobena'
     })
-    .expect(400)
-    .expect({ message: 'Bad Request.' })
+    .expect(404)
+    .expect({ message: 'Document not found.' })
     .end(done);
   });
 

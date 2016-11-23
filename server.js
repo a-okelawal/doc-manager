@@ -42,7 +42,15 @@ app.use((req, res, next) => {
         }
         // If all is good, save request for use in other routes
         req.decoded = decoded;
-        next();
+        if (req.path === '/api/roles') {
+          if (req.decoded.RoleId === 1) {
+            next();
+          } else {
+            res.status(403).send({ message: 'Access denied.' });
+          }
+        } else {
+          next();
+        }
       });
     } else {
       // If there is no token, return error
@@ -52,10 +60,9 @@ app.use((req, res, next) => {
 });
 
 // Add Routes
-app.use('/api', userRoute);
-app.use('/api', roleRoute);
-app.use('/api', docRoute);
+app.use('/api/users', userRoute);
+app.use('/api/roles', roleRoute);
+app.use('/api/documents', docRoute);
 
-console.log('Connected to port ' + port);
 app.listen(port);
 export default app;

@@ -103,13 +103,13 @@ export default (sequelize, DataTypes) => {
               if (role.id === req.decoded.RoleId) {
                 res.status(200).send(document);
               } else {
-                res.status(401).send({ message: 'Access denied: Unauthorized Role.' });
+                res.status(403).send({ message: 'Access denied: Unauthorized Role.' });
               }
             });
           } else if (req.decoded.id === document.ownerId || req.decoded.RoleId === 1) {
             res.status(200).send(document);
           } else {
-            res.status(401).send({ message: 'Access denied.' });
+            res.status(403).send({ message: 'Access denied.' });
           }
         });
       },
@@ -141,7 +141,7 @@ export default (sequelize, DataTypes) => {
           if (status === 1) {
             res.send({ message: 'Document deleted.' });
           } else {
-            res.status(400).send({ message: 'Bad Request.' });
+            res.status(404).send({ message: 'Document not found.' });
           }
         });
       },
@@ -164,7 +164,7 @@ export default (sequelize, DataTypes) => {
               if (req.decoded.RoleId === 1 || updatedDocument.UserId === req.decoded.id) {
                 res.send(updatedDocument);
               } else {
-                res.status(401).send({ message: 'Access Denied.' });
+                res.status(403).send({ message: 'Access Denied.' });
               }
             });
           } else {

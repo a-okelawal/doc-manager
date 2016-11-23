@@ -2,7 +2,7 @@ import chai from 'chai';
 import altrequest from 'request';
 import supertest from 'supertest';
 import app from '../server';
-import models from '../models/index';
+import models from '../models';
 
 let token = '';
 let adminToken = '';
@@ -74,7 +74,7 @@ describe('Role', () => {
   it(' should validate the new role cannot be created wiht no title.', (done) => {
     request.post('/api/roles').set('x-access-token', adminToken).set('Accept', 'application/json').send({
     })
-    .expect(200)
+    .expect(400)
     .expect({ message: 'Role title cannot be null.' })
     .end(done);
   });
@@ -83,7 +83,7 @@ describe('Role', () => {
     request.post('/api/roles').set('x-access-token', token).set('Accept', 'application/json').send({
       title: 'non-admin'
     })
-    .expect(401)
+    .expect(403)
     .expect({ message: 'Access denied.' })
     .end(done);
   });
@@ -99,7 +99,7 @@ describe('Role', () => {
 
   it(' should ensure non-admin users cannot access all roles.', (done) => {
     request.get('/api/roles').set('x-access-token', token)
-    .set('Accept', 'application/json').expect(401)
+    .set('Accept', 'application/json').expect(403)
     .expect({ message: 'Access denied.' })
     .end(done);
   });
