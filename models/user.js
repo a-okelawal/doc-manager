@@ -71,7 +71,7 @@ export default (sequelize, DataTypes) => {
           if (user) {
             res.status(200).send(user);
           } else {
-            res.status(404).send({ message: 'Valid user name required.' });
+            res.status(404).send({ message: 'User not found.' });
           }
         });
       },
@@ -88,7 +88,7 @@ export default (sequelize, DataTypes) => {
                 token: jwt.sign(user.dataValues, config.secret, {
                   expiresIn: 60 * 60 * 60 * 24 }) });
             } else {
-              res.status(401).send({ message: 'Wrong Password.' });
+              res.status(403).send({ message: 'Wrong Password.' });
             }
           } else {
             res.status(404).send({ message: 'User does not exist.' });
@@ -108,7 +108,10 @@ export default (sequelize, DataTypes) => {
             expiresIn: 60 * 60 * 60 * 24 });
           res.status(201).send(user);
         }).catch((err) => {
-          res.status(400).send({ message: 'User not created.', error: err.message });
+          res.status(400).send({
+            message: 'User not created.',
+            error: 'Missing fields needed to create user.'
+          });
         });
       },
       remove: (req, res) => {
@@ -124,7 +127,7 @@ export default (sequelize, DataTypes) => {
             }
             res.send({ message: 'User deleted.' });
           } else {
-            res.status(404).send({ message: 'User not deleted.' });
+            res.status(404).send({ message: 'User not found.' });
           }
         });
       },

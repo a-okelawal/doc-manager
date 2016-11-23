@@ -32,7 +32,7 @@ export default (sequelize, DataTypes) => {
               res.send({ message: 'Role was created.', document: doc });
             });
           } else {
-            res.send({ message: 'Role title cannot be null.' });
+            res.status(400).send({ message: 'Role title cannot be null.' });
           }
         });
       },

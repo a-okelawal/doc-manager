@@ -2,7 +2,7 @@ import chai from 'chai';
 import altrequest from 'request';
 import supertest from 'supertest';
 import app from '../server';
-import models from '../models/index';
+import models from '../models';
 
 const expect = chai.expect;
 const request = supertest(app);
@@ -62,7 +62,7 @@ describe('User', () => {
     }).expect(201)
     .end((req, res) => {
       expect(res.body.message).to.equal('User not created.');
-      expect(res.body.error).to.equal('Validation error');
+      expect(res.body.error).to.equal('Missing fields needed to create user.');
       done();
     });
   });
@@ -106,8 +106,8 @@ describe('User', () => {
     .expect(400)
     .end((req, res) => {
       expect(res.body.message).to.equal('User not created.');
-      expect(((res.body.error).split(','))[0]).to
-      .equal('Validation error: Validation notEmpty failed');
+      expect(res.body.error).to
+      .equal('Missing fields needed to create user.');
       done();
     });
   });
@@ -125,7 +125,7 @@ describe('User', () => {
   it('should validate non-admin users cannot get all users.', (done) => {
     request.get('/api/users').set('x-access-token', token)
     .set('Accept', 'application/json')
-    .expect(401)
+    .expect(403)
     .end((err, res) => {
       expect(res.body.message).to.equal('Access denied.');
       done();
@@ -135,9 +135,9 @@ describe('User', () => {
   it('should report when user does not exist.', (done) => {
     request.get('/api/users/barma').set('x-access-token', token)
     .set('Accept', 'application/json')
-    .expect(401)
+    .expect(404)
     .end((err, res) => {
-      expect(res.body.message).to.equal('Valid user name required.');
+      expect(res.body.message).to.equal('User not found.');
       done();
     });
   });
@@ -160,7 +160,7 @@ describe('User', () => {
     .set('Accept', 'application/json').send({
       username: 'admina'
     })
-    .expect(401)
+    .expect(403)
     .expect({ message: 'Access denied.' })
     .end(done);
   });
@@ -180,7 +180,7 @@ describe('User', () => {
       username: 'admin',
       password: 'Panting'
     })
-    .expect(401)
+    .expect(403)
     .expect({ message: 'Wrong Password.' })
     .end(done);
   });
@@ -212,7 +212,7 @@ describe('User', () => {
     .set('Accept', 'application/json').send({
       username: 'admin'
     })
-    .expect(401)
+    .expect(403)
     .expect({ message: 'Access denied.' })
     .end(done);
   });
@@ -243,7 +243,7 @@ describe('User', () => {
       username: 'tunatunafish'
     })
     .expect(404)
-    .expect({ message: 'User not deleted.' })
+    .expect({ message: 'User not found.' })
     .end(done);
   });
 });

@@ -42,9 +42,11 @@ describe('Search', () => {
     .set('x-access-token', token).set('Accept', 'application/json')
     .expect(200)
     .end((req, res) => {
+      const temp1 = new Date();
+      const temp2 = new Date(res.body[0].createdAt);
       expect(res.body).to.have.length.of.at.most(5);
-      expect((new Date(res.body[0].createdAt)).toDateString()).to
-      .equal((new Date()).toDateString());
+      expect(temp2.toDateString()).to
+      .equal(temp.toDateString());
       done();
     }
     );
