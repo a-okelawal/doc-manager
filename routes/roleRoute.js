@@ -1,8 +1,11 @@
 import express from 'express';
 import models from '../models';
+import adminCheck from '../middleware/adminCheck';
 
 const router = express.Router();
 const Role = models.Role;
+
+router.use(adminCheck);
 
 router.route('/').post((req, res) => {
   Role.createRole(req, res);

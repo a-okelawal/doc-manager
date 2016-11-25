@@ -52,7 +52,10 @@ describe('Role', () => {
   });
 
   it(' should validate the new role created has a unique title.', (done) => {
-    request.post('/api/roles').set('x-access-token', adminToken).set('Accept', 'application/json').send({
+    request.post('/api/roles')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .send({
       title: 'admin'
     })
     .expect(200)
@@ -61,7 +64,10 @@ describe('Role', () => {
   });
 
   it(' should validate the new role created with a unique title was created.', (done) => {
-    request.post('/api/roles').set('x-access-token', adminToken).set('Accept', 'application/json').send({
+    request.post('/api/roles')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .send({
       title: 'level 1'
     })
     .expect(200)
@@ -72,7 +78,10 @@ describe('Role', () => {
   });
 
   it(' should validate the new role cannot be created wiht no title.', (done) => {
-    request.post('/api/roles').set('x-access-token', adminToken).set('Accept', 'application/json').send({
+    request.post('/api/roles')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .send({
     })
     .expect(400)
     .expect({ message: 'Role title cannot be null.' })
@@ -80,7 +89,10 @@ describe('Role', () => {
   });
 
   it(' should show that a non-admin user cannot create a new role.', (done) => {
-    request.post('/api/roles').set('x-access-token', token).set('Accept', 'application/json').send({
+    request.post('/api/roles')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       title: 'non-admin'
     })
     .expect(403)
@@ -89,8 +101,10 @@ describe('Role', () => {
   });
 
   it(' should validate all roles are returned on Roles.all.', (done) => {
-    request.get('/api/roles').set('x-access-token', adminToken)
-    .set('Accept', 'application/json').expect(200)
+    request.get('/api/roles')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .expect(200)
     .end((req, res) => {
       expect((res.body).length).to.equal(second);
       done();
@@ -98,15 +112,19 @@ describe('Role', () => {
   });
 
   it(' should ensure non-admin users cannot access all roles.', (done) => {
-    request.get('/api/roles').set('x-access-token', token)
-    .set('Accept', 'application/json').expect(403)
+    request.get('/api/roles')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .expect(403)
     .expect({ message: 'Access denied.' })
     .end(done);
   });
 
   it(' should validate all roles are returned on Roles.all.', (done) => {
-    request.get('/api/roles').set('x-access-token', adminToken)
-    .set('Accept', 'application/json').expect(200)
+    request.get('/api/roles')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .expect(200)
     .end((req, res) => {
       let count = 0;
       (res.body).forEach((role) => {
@@ -120,7 +138,10 @@ describe('Role', () => {
   });
 
   it(' should validate roles can be deleted.', (done) => {
-    request.delete('/api/roles').set('x-access-token', adminToken).set('Accept', 'application/json').send({
+    request.delete('/api/roles')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .send({
       title: 'level 1'
     })
     .expect(200)

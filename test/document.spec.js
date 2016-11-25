@@ -84,7 +84,10 @@ describe('Document', () => {
   });
 
   it('should validate the creation of a new user document.', (done) => {
-    request.post('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
+    console.log("This is token", token);
+    request.post('/api/documents')
+    .set({ 'x-access-token': token })
+    .send({
       ownerId: 1,
       title: 'Another',
       content: 'This another document for testing.',
@@ -92,14 +95,21 @@ describe('Document', () => {
       role: 'regular'
     })
     .expect(200)
-    .end((req, res) => {
+    .end((err, res) => {
+      if (err) {
+        console.log(err);
+        return done(err);
+      }
       expect(res.body.message).to.equal('Document Created.');
       done();
     });
   });
 
-  it('should validate the creation of a new user document.', (done) => {
-    request.post('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
+  it('should a new document must have unique title.', (done) => {
+    request.post('/api/documents')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       ownerId: 1,
       title: 'Another',
       content: 'This another document for testing.',
@@ -114,7 +124,10 @@ describe('Document', () => {
   });
 
   it('should ensure a document is set to public by default.', (done) => {
-    request.post('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
+    request.post('/api/documents')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       title: 'tobe',
       content: 'Deleted',
       role: 'regular'
@@ -127,23 +140,32 @@ describe('Document', () => {
   });
 
   it('should ensure only user can retrieve his private documents.', (done) => {
-    request.get('/api/documents/Second').set('x-access-token', token).set('Accept', 'application/json').expect(200)
+    request.get('/api/documents/Second')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .expect(200)
     .end((req, res) => {
       expect(res.body.access).to.equal('private');
       done();
     });
   });
 
-  it('should a user only user can retrieve his private documents.', (done) => {
-    request.get('/api/documents/Second').set('x-access-token', otherToken).set('Accept', 'application/json').expect(403)
+  it('should a user cannot retrieve another users private documents.', (done) => {
+    request.get('/api/documents/Second')
+    .set('x-access-token', otherToken)
+    .set('Accept', 'application/json')
+    .expect(403)
     .end((req, res) => {
       expect(res.body.message).to.equal('Access denied.');
       done();
     });
   });
 
-  it('should ensure that on access = role, only user with same role can retrieve the document.', (done) => {
-    request.get('/api/documents/Eight').set('x-access-token', otherToken).set('Accept', 'application/json').expect(403)
+  it('should ensure that on access equal to role, only user with same role can retrieve the document.', (done) => {
+    request.get('/api/documents/Eight')
+    .set('x-access-token', otherToken)
+    .set('Accept', 'application/json')
+    .expect(403)
     .end((req, res) => {
       expect(res.body.message).to.equal('Access denied: Unauthorized Role.');
       done();
@@ -151,7 +173,10 @@ describe('Document', () => {
   });
 
   it('should return all documents in order of their published dates.', (done) => {
-    request.get('/api/documents').set('x-access-token', adminToken).set('Accept', 'application/json').expect(200)
+    request.get('/api/documents')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .expect(200)
     .end(
       (req, res) => {
         expect((res.body).length).to.equal(second);
@@ -162,7 +187,10 @@ describe('Document', () => {
   });
 
   it('should return x documents with query parameter limit x.', (done) => {
-    request.get('/api/documents?limit=5').set('x-access-token', token).set('Accept', 'application/json').expect(200)
+    request.get('/api/documents?limit=5')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .expect(200)
     .end(
       (req, res) => {
         expect(res.body).to.have.length.of.at.most(5);
@@ -172,7 +200,10 @@ describe('Document', () => {
   });
 
   it('should employ the limit with an offset as well.', (done) => {
-    request.get('/api/documents?limit=5&offset=3').set('x-access-token', token).set('Accept', 'application/json').expect(200)
+    request.get('/api/documents?limit=5&offset=3')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .expect(200)
     .end(
       (req, res) => {
         expect(res.body).to.have.length.of.at.most(5);
@@ -183,7 +214,10 @@ describe('Document', () => {
   });
 
   it('should ensure that a user can update his/her document.', (done) => {
-    request.put('/api/documents/Another').set('x-access-token', token).set('Accept', 'application/json').send({
+    request.put('/api/documents/Another')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       content: 'This is change'
     })
     .expect(200)
@@ -193,8 +227,11 @@ describe('Document', () => {
     });
   });
 
-  it('should validate that users can update details.', (done) => {
-    request.put('/api/documents/Anothers').set('x-access-token', token).set('Accept', 'application/json').send({
+  it('should ensure only existing documents can be update details.', (done) => {
+    request.put('/api/documents/Anothers')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       content: 'To he that does not exist'
     })
     .expect(404)
@@ -204,8 +241,11 @@ describe('Document', () => {
     });
   });
 
-  it('should validate that users can update details.', (done) => {
-    request.put('/api/documents/Another').set('x-access-token', otherToken).set('Accept', 'application/json').send({
+  it('should validate that users cannot update another users document.', (done) => {
+    request.put('/api/documents/Another')
+    .set('x-access-token', otherToken)
+    .set('Accept', 'application/json')
+    .send({
       content: 'This is change'
     })
     .expect(200)
@@ -216,7 +256,10 @@ describe('Document', () => {
   });
 
   it('should validate that users can only delete documents that exist.', (done) => {
-    request.delete('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
+    request.delete('/api/documents')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       title: 'tobena'
     })
     .expect(404)
@@ -225,7 +268,10 @@ describe('Document', () => {
   });
 
   it('should validate that users can delete document.', (done) => {
-    request.delete('/api/documents').set('x-access-token', token).set('Accept', 'application/json').send({
+    request.delete('/api/documents')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       title: 'tobe'
     })
     .expect(200)
