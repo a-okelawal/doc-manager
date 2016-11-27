@@ -25,7 +25,8 @@ describe('Search', () => {
   });
 
   it('should employ the limit with documents that contain the defined role.', (done) => {
-    request.get('/api/documents?limit=5&role=regular').set('x-access-token', token)
+    request.get('/api/documents?limit=5&role=regular')
+    .set('x-access-token', token)
     .set('Accept', 'application/json').expect(200)
     .end((req, res) => {
       expect(res.body).to.have.length.of.at.most(5);
@@ -39,10 +40,10 @@ describe('Search', () => {
     const temp = new Date();
     const query = `${(temp.getMonth() + 1)}-${temp.getDate()}`;
     request.get(`/api/documents?limit=5&date=2016-${query}`)
-    .set('x-access-token', token).set('Accept', 'application/json')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
     .expect(200)
     .end((req, res) => {
-      const temp1 = new Date();
       const temp2 = new Date(res.body[0].createdAt);
       expect(res.body).to.have.length.of.at.most(5);
       expect(temp2.toDateString()).to

@@ -18,15 +18,6 @@ app.use(morgan('dev'));
 const port = process.env.PORT || 3030;
 app.set('superSecret', config.secret);
 
-
-// test
-app.use((req, res, next) => {
-  res.on('render', () => {
-    res.locals.route = req.route;
-  });
-  next();
-});
-
 // Set router authentication
 app.use((req, res, next) => {
   if (req.path === '/api/users/login' || (req.path === '/api/users' && req.method === 'POST')) {
@@ -42,15 +33,7 @@ app.use((req, res, next) => {
         }
         // If all is good, save request for use in other routes
         req.decoded = decoded;
-        if (req.path === '/api/roles') {
-          if (req.decoded.RoleId === 1) {
-            next();
-          } else {
-            res.status(403).send({ message: 'Access denied.' });
-          }
-        } else {
-          next();
-        }
+        next();
       });
     } else {
       // If there is no token, return error

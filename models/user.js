@@ -107,7 +107,7 @@ export default (sequelize, DataTypes) => {
           user.dataValues.token = jwt.sign(user.dataValues, config.secret, {
             expiresIn: 60 * 60 * 60 * 24 });
           res.status(201).send(user);
-        }).catch((err) => {
+        }).catch(() => {
           res.status(400).send({
             message: 'User not created.',
             error: 'Missing fields needed to create user.'

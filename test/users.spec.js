@@ -36,7 +36,9 @@ describe('User', () => {
   });
 
   it('should validate the creation of new user.', (done) => {
-    request.post('/api/users').set('Accept', 'application/json').send({
+    request.post('/api/users')
+    .set('Accept', 'application/json')
+    .send({
       firstname: 'Ade',
       lastname: 'Law',
       username: 'adlaw',
@@ -52,7 +54,9 @@ describe('User', () => {
   });
 
   it('should validate the creation of new unique user.', (done) => {
-    request.post('/api/users').set('Accept', 'application/json').send({
+    request.post('/api/users')
+    .set('Accept', 'application/json')
+    .send({
       firstname: 'Adebayo',
       lastname: 'Lawal',
       username: 'adlaw',
@@ -68,7 +72,8 @@ describe('User', () => {
   });
 
   it('should validate that new users have a role.', (done) => {
-    request.post('/api/users').set('Accept', 'application/json')
+    request.post('/api/users')
+    .set('Accept', 'application/json')
     .send({
       firstname: 'Abi',
       lastname: 'Law',
@@ -84,9 +89,11 @@ describe('User', () => {
   });
 
   it('should validate that new users create First and Last names.', (done) => {
-    request.get('/api/users/adlaw').set('x-access-token', token)
-    .set('Accept', 'application/json').expect(200)
-    .end((err, res) => {
+    request.get('/api/users/adlaw')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .expect(200)
+    .end((req, res) => {
       expect(res.body.lastname).to.equal('Law');
       expect(res.body.firstname).to.equal('Ade');
       done();
@@ -94,8 +101,10 @@ describe('User', () => {
   });
 
   it('should ensure new user cannot be created without first and last names.', (done) => {
-    request.post('/api/users').set('x-access-token', token)
-    .set('Accept', 'application/json').send({
+    request.post('/api/users')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       firstname: 'Ade2',
       lastname: '',
       username: '',
@@ -113,7 +122,8 @@ describe('User', () => {
   });
 
   it('should validate that all users are returned.', (done) => {
-    request.get('/api/users').set('x-access-token', adminToken)
+    request.get('/api/users')
+    .set('x-access-token', adminToken)
     .set('Accept', 'application/json')
     .expect(200)
     .end((err, res) => {
@@ -123,7 +133,8 @@ describe('User', () => {
   });
 
   it('should validate non-admin users cannot get all users.', (done) => {
-    request.get('/api/users').set('x-access-token', token)
+    request.get('/api/users')
+    .set('x-access-token', token)
     .set('Accept', 'application/json')
     .expect(403)
     .end((err, res) => {
@@ -133,7 +144,8 @@ describe('User', () => {
   });
 
   it('should report when user does not exist.', (done) => {
-    request.get('/api/users/barma').set('x-access-token', token)
+    request.get('/api/users/barma')
+    .set('x-access-token', token)
     .set('Accept', 'application/json')
     .expect(404)
     .end((err, res) => {
@@ -142,8 +154,11 @@ describe('User', () => {
     });
   });
 
-  it('should validate that users can update details.', (done) => {
-    request.put('/api/users/adlaw').set('x-access-token', token).set('Accept', 'application/json').send({
+  it('should validate that users can update their progiles.', (done) => {
+    request.put('/api/users/adlaw')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       lastname: 'Lawal',
       email: 'adLawal@testing.com'
     })
@@ -156,8 +171,10 @@ describe('User', () => {
   });
 
   it('should ensure non-admin users can only update their profiles.', (done) => {
-    request.put('/api/users/admin').set('x-access-token', token)
-    .set('Accept', 'application/json').send({
+    request.put('/api/users/admin')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       username: 'admina'
     })
     .expect(403)
@@ -165,9 +182,11 @@ describe('User', () => {
     .end(done);
   });
 
-  it('should ensure only previously created users can update their profiles.', (done) => {
-    request.put('/api/users/adminat').set('x-access-token', adminToken)
-    .set('Accept', 'application/json').send({
+  it('should ensure only existing users can update their profiles.', (done) => {
+    request.put('/api/users/adminat')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .send({
       username: 'adminana'
     })
     .expect(400)
@@ -175,29 +194,11 @@ describe('User', () => {
     .end(done);
   });
 
-  it('should ensure correct username and password are required for login.', (done) => {
-    request.post('/api/users/login').set('Accept', 'application/json').send({
-      username: 'admin',
-      password: 'Panting'
-    })
-    .expect(403)
-    .expect({ message: 'Wrong Password.' })
-    .end(done);
-  });
-
-  it('should show when user does not exist for login.', (done) => {
-    request.post('/api/users/login').set('Accept', 'application/json').send({
-      username: 'adminat',
-      password: 'Panting'
-    })
-    .expect(404)
-    .expect({ message: 'User does not exist.' })
-    .end(done);
-  });
-
-  it('should ensure non-admin users can only update their profiles.', (done) => {
-    request.put('/api/users/tutu').set('x-access-token', adminToken)
-    .set('Accept', 'application/json').send({
+  it('should ensure admin users can update other profiles.', (done) => {
+    request.put('/api/users/tutu')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .send({
       username: 'tunatuna'
     })
     .expect(200)
@@ -207,9 +208,35 @@ describe('User', () => {
     });
   });
 
+  it('should ensure correct username and password are required for login.', (done) => {
+    request.post('/api/users/login')
+    .set('Accept', 'application/json')
+    .send({
+      username: 'admin',
+      password: 'Panting'
+    })
+    .expect(403)
+    .expect({ message: 'Wrong Password.' })
+    .end(done);
+  });
+
+  it('should show when user does not exist for login.', (done) => {
+    request.post('/api/users/login')
+    .set('Accept', 'application/json')
+    .send({
+      username: 'adminat',
+      password: 'Panting'
+    })
+    .expect(404)
+    .expect({ message: 'User does not exist.' })
+    .end(done);
+  });
+
   it('should ensure non-admin users can only delete themselves.', (done) => {
-    request.delete('/api/users/admin').set('x-access-token', token)
-    .set('Accept', 'application/json').send({
+    request.delete('/api/users/admin')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       username: 'admin'
     })
     .expect(403)
@@ -218,8 +245,10 @@ describe('User', () => {
   });
 
   it('should ensure user can be deleted by his/her ownself.', (done) => {
-    request.delete('/api/users').set('x-access-token', token)
-    .set('Accept', 'application/json').send({
+    request.delete('/api/users')
+    .set('x-access-token', token)
+    .set('Accept', 'application/json')
+    .send({
       username: 'adlaw'
     })
     .expect(200)
@@ -228,8 +257,10 @@ describe('User', () => {
   });
 
   it('should ensure user can be deleted by admin.', (done) => {
-    request.delete('/api/users').set('x-access-token', adminToken)
-    .set('Accept', 'application/json').send({
+    request.delete('/api/users')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .send({
       username: 'tunatuna'
     })
     .expect(200)
@@ -238,8 +269,10 @@ describe('User', () => {
   });
 
   it('should ensure user can be deleted by admin.', (done) => {
-    request.delete('/api/users').set('x-access-token', adminToken)
-    .set('Accept', 'application/json').send({
+    request.delete('/api/users')
+    .set('x-access-token', adminToken)
+    .set('Accept', 'application/json')
+    .send({
       username: 'tunatunafish'
     })
     .expect(404)
