@@ -47,6 +47,5 @@ app.use('/api/users', userRoute);
 app.use('/api/roles', roleRoute);
 app.use('/api/documents', docRoute);
 
-console.log("Connected to port: ", port);
 app.listen(port);
 export default app;
